@@ -76,7 +76,7 @@ if has('nvim') && use_deoplete
         let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
 
         " clang builtin header path
-        let g:deoplete#sources#clang#clang_header = '/usr/lib/clang/3.8.1/include'
+        let g:deoplete#sources#clang#clang_header = '/usr/lib/clang/3.9.0/include'
 
         " C or C++ standard version
         let g:deoplete#sources#clang#std#c = 'c11'
@@ -90,7 +90,7 @@ if has('nvim') && use_deoplete
         let g:deoplete#sources#clang#clang_complete_database = '~/.cache/deoplete-clang/build/'
 
         " default flags
-        let g:deoplete#sources#clang#flags = [ "-cc1", "-triple x86_64-unknown-linux-gnu", "-E", "-disable-free", "-disable-llvm-verifier", "-main-file-name", "-mrelocation-model static", "-mthread-model posix", "-mdisable-fp-elim", "-fmath-errno", "-masm-verbose", "-mconstructor-aliases", "-munwind-tables", "-fuse-init-array", "-target-cpu x86-64", "-v", "-dwarf-column-info", "-debugger-tuning=gdb", "-resource-dir /usr/bin/../lib/clang/3.8.1", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward", "-internal-isystem /usr/local/include", "-internal-isystem /usr/bin/../lib/clang/3.8.1/include", "-internal-externc-isystem /include", "-internal-externc-isystem /usr/include", "-fdeprecated-macro", "-fdebug-compilation-dir ~/.cache/deoplete/build/", "-ferror-limit 19", "-fmessage-length 176", "-fobjc-runtime=gcc", "-fcxx-exceptions", "-fexceptions", "-fdiagnostics-show-option", "-fcolor-diagnostics", "-o", "-", "-x c++" ]
+        let g:deoplete#sources#clang#flags = [ "-cc1", "-triple x86_64-unknown-linux-gnu", "-E", "-disable-free", "-disable-llvm-verifier", "-main-file-name", "-mrelocation-model static", "-mthread-model posix", "-mdisable-fp-elim", "-fmath-errno", "-masm-verbose", "-mconstructor-aliases", "-munwind-tables", "-fuse-init-array", "-target-cpu x86-64", "-v", "-dwarf-column-info", "-debugger-tuning=gdb", "-resource-dir /usr/bin/../lib/clang/3.9.0", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward", "-internal-isystem /usr/local/include", "-internal-isystem /usr/bin/../lib/clang/3.9.0/include", "-internal-externc-isystem /include", "-internal-externc-isystem /usr/include", "-fdeprecated-macro", "-fdebug-compilation-dir ~/.cache/deoplete/build/", "-ferror-limit 19", "-fmessage-length 176", "-fobjc-runtime=gcc", "-fcxx-exceptions", "-fexceptions", "-fdiagnostics-show-option", "-fcolor-diagnostics", "-o", "-", "-x c++" ]
 else
     let use_completor = 1
     if use_completor
@@ -228,11 +228,11 @@ Plug 'https://github.com/tommcdo/vim-kangaroo.git' " manual jump stack: zp, zP
 
 Plug 'https://github.com/pgdouyon/vim-evanesco.git' " replacement for vim-oblique - improved / search
 
-Plug 'https://github.com/chrisbra/vim-diff-enhanced' " :EnhancedDiff ...
-    " If started In Diff-Mode set diffexpr (plugin not loaded yet)
-    if &diff
-        let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
-    endif
+"Plug 'https://github.com/chrisbra/vim-diff-enhanced' " :EnhancedDiff ...
+"    " If started In Diff-Mode set diffexpr (plugin not loaded yet)
+"    if &diff
+"        let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+"    endif
 
 Plug 'https://github.com/tmhedberg/matchit.git' " Extended matching with '%'
 
@@ -242,8 +242,7 @@ Plug 'https://github.com/vim-scripts/ShowMultiBase.git' " Display number under c
 
 Plug 'https://github.com/vimwiki/vimwiki.git', { 'rev' : 'dev' } " vim wiki
     let g:vimwiki_listsyms = '✗○◐●✓'
-
-" Plug 'https://github.com/Konfekt/FastFold.git' " should speed up vim when folds are different from manual
+    let g:vimwiki_list = [{'auto_tags': 1}]
 
 " Plug 'https://github.com/itchyny/calendar.vim' " calendar, cool but I'm not using it
 
@@ -300,9 +299,11 @@ Plug 'https://github.com/tex/vim-dirdiff.git'
     " this plugin has bug in parsing non-C language diff output
     let g:DirDiffForceLang = "C"
 
+Plug 'https://github.com/Shougo/context_filetype.vim.git'
 Plug 'https://github.com/Shougo/echodoc.vim.git'
-	set noshowmode
-	let g:echodoc_enable_at_startup = 1
+"   set cmdheight=2
+    set noshowmode
+    let g:echodoc_enable_at_startup = 1
 
 call plug#end()
 
@@ -881,3 +882,34 @@ set sc nosc
 set linebreak
 set breakindent
 set showbreak=↪
+
+function! InsertStatuslineColor(mode)
+  if a:mode == 'i'
+    hi statusline ctermbg=lightblue
+    set cursorcolumn
+  elseif a:mode == 'r'
+    hi statusline ctermbg=red
+  else
+    hi statusline ctermbg=lightred
+  endif
+endfunction
+
+function! InsertLeaveActions()
+  hi statusline ctermbg=green
+  set nocursorcolumn
+endfunction
+
+au InsertEnter * call InsertStatuslineColor(v:insertmode)
+au InsertChange * call InsertStatuslineColor(v:insertmode)
+au InsertLeave * call InsertLeaveActions()
+
+" default the statusline to green when entering Vim
+hi statusline ctermbg=green
+
+" to handle exiting insert mode via a control-C
+inoremap <c-c> <c-o>:call InsertLeaveActions()<cr><c-c>
+
+if has('nvim')
+  set icm=nosplit
+endif
+
