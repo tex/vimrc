@@ -2,10 +2,18 @@ colorscheme darkblue
 
 set nocompatible
 
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall | source ~/.vimrc
+if has('nvim')
+    if empty(glob('~/.config/nvim/autoload/plug.vim'))
+        silent !curl -fLo ~/.config/nvim/autoload/plug.vim --create-dirs
+                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall | source ~/.config/nvim/init.vim
+    endif
+else
+    if empty(glob('~/.vim/autoload/plug.vim'))
+        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall | source ~/.vimrc
+    endif
 endif
 
 
@@ -73,10 +81,10 @@ if has('nvim') && use_deoplete
     Plug 'https://github.com/zchee/deoplete-jedi'             " Python completion
     Plug 'https://github.com/zchee/deoplete-clang'            " C/C++ completion
         " libclang shared library path
-        let g:deoplete#sources#clang#libclang_path = '/usr/lib/libclang.so'
+        let g:deoplete#sources#clang#libclang_path = '/nix/store/by9vyj90qdjid6rgbqkx4g8scwfkjkwp-clang-3.9.1/lib/libclang.so'
 
         " clang builtin header path
-        let g:deoplete#sources#clang#clang_header = '/usr/lib/clang/3.9.0/include'
+        let g:deoplete#sources#clang#clang_header = '/nix/store/by9vyj90qdjid6rgbqkx4g8scwfkjkwp-clang-3.9.1/include'
 
         " C or C++ standard version
         let g:deoplete#sources#clang#std#c = 'c11'
@@ -163,14 +171,23 @@ if has('nvim') && use_neomake
         au!
         autocmd BufWritePost * Neomake
     augroup END
-"   let g:neomake_verbose = 3
+"  let g:neomake_verbose = 3
 else
     Plug 'https://github.com/scrooloose/syntastic' " Syntax checker
     " Don't use Syntastic on erlang files, vimerl does better job
     let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['erlang'] }
 endif
 
+" Plug 'https://github.com/w0rp/ale.git' " Neomake and Syntastic replacement
+
 Plug 'https://github.com/Shougo/denite.nvim.git'    " fast file_rec
+Plug 'https://github.com/ozelentok/denite-gtags.git'
+    nnoremap <leader>d :DeniteCursorWord -buffer-name=gtags_def gtags_def<cr>
+    nnoremap <leader>r :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<cr>
+    nnoremap <leader>g :DeniteCursorWord -buffer-name=gtags_grep gtags_grep<cr>
+    nnoremap <leader>t :Denite -buffer-name=gtags_completion gtags_completion<cr>
+    nnoremap <leader>f :Denite -buffer-name=gtags_file gtags_file<cr>
+    nnoremap <leader>p :Denite -buffer-name=gtags_path gtags_path<cr>
 
 " Text Objects
 Plug 'https://github.com/wellle/targets.vim.git' " di', cin), da, ... many targets
@@ -305,6 +322,12 @@ Plug 'https://github.com/Shougo/echodoc.vim.git'
     set noshowmode
     let g:echodoc_enable_at_startup = 1
 
+Plug 'https://github.com/thinca/vim-qfreplace.git'
+
+Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
+
+"Plug 'https://github.com/baabelfish/nvim-nim.git' " NIM language
+
 call plug#end()
 
 if has('nvim') && use_deoplete
@@ -347,8 +370,46 @@ endif
     nnoremap <silent> [unite]d :UniteWithProjectDir -buffer-name=change-cwd -default-action=lcd neomru/directory<CR>
 
     " Quick file search
-    nnoremap <silent> [unite]f :UniteWithProjectDir -buffer-name=files -start-insert -resume file_rec<CR>
+"    nnoremap <silent> [unite]f :UniteWithProjectDir -buffer-name=files -start-insert -resume file_rec<CR>
     nnoremap <silent> [unite]F :UniteResume files<CR>
+
+call denite#custom#map(
+	      \ 'insert',
+	      \ '<Esc>',
+	      \ '<denite:enter_mode:normal>',
+	      \ 'noremap'
+	      \)
+call denite#custom#map(
+	      \ 'insert',
+	      \ '<Down>',
+	      \ '<denite:move_to_next_line>',
+	      \ 'noremap'
+	      \)
+	call denite#custom#map(
+	      \ 'insert',
+	      \ '<Up>',
+	      \ '<denite:move_to_previous_line>',
+	      \ 'noremap'
+\)
+call denite#custom#map(
+	      \ 'normal',
+	      \ '<Down>',
+	      \ '<denite:move_to_next_line>',
+	      \ 'noremap'
+	      \)
+	call denite#custom#map(
+	      \ 'normal',
+	      \ '<Up>',
+	      \ '<denite:move_to_previous_line>',
+	      \ 'noremap'
+\)
+	call denite#custom#source(
+	\ 'file_rec', 'sorters', ['sorter_rank'])
+	call denite#custom#source(
+	\ 'file_rec', 'matchers', ['matcher_substring', 'matcher_ignore_globs'])
+
+    nnoremap <silent> [unite]f :DeniteProjectDir -buffer-name=files -resume file_rec<CR>
+
 
     " Search files with the same base name as has the currently selected buffer
     nnoremap <silent> [unite]ff :execute 'UniteWithProjectDir -buffer-name=files -resume -input='.expand('%:t:r').' file_rec'<CR>
