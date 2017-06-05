@@ -54,6 +54,7 @@ Plug 'https://github.com/osyo-manga/unite-quickfix.git'
 
 " File manager
 Plug 'https://github.com/Shougo/vimfiler.vim'
+Plug 'https://github.com/romgrk/vimfiler-prompt.git'
     let g:loaded_netrwPlugin = 1 " Disable netrw.vim
     let g:vimfiler_safe_mode_by_default = 0
     let g:unite_kind_file_use_trashbox = 1
@@ -63,17 +64,21 @@ Plug 'https://github.com/Shougo/vimfiler.vim'
     let g:vimfiler_enable_auto_cd = 0
     let g:vimfiler_time_format = "%y/%m/%d %H:%M "  " The space at the end is important (my terminal cuts off last column?...)
 
-    nnoremap <silent> - :VimFilerBufferDir -create<CR>
+    nnoremap <silent> - :VimFilerBufferDir -buffer-name=vimfiler<CR>
 
     autocmd FileType vimfiler call s:vimfiler_settings()
     function! s:vimfiler_settings()
         nunmap <buffer> <C-i>
+        nmap <buffer> i :VimFilerPrompt<CR>
     endfunction
+
 
 " Code completion
 let use_deoplete = 1
 
-if has('nvim') && use_deoplete
+if has('nvim')
+    
+if use_deoplete
     Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
         let g:deoplete#enable_at_startup = 1
 
@@ -99,6 +104,15 @@ if has('nvim') && use_deoplete
 
         " default flags
         let g:deoplete#sources#clang#flags = [ "-cc1", "-triple x86_64-unknown-linux-gnu", "-E", "-disable-free", "-disable-llvm-verifier", "-main-file-name", "-mrelocation-model static", "-mthread-model posix", "-mdisable-fp-elim", "-fmath-errno", "-masm-verbose", "-mconstructor-aliases", "-munwind-tables", "-fuse-init-array", "-target-cpu x86-64", "-v", "-dwarf-column-info", "-debugger-tuning=gdb", "-resource-dir /usr/bin/../lib/clang/3.9.0", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward", "-internal-isystem /usr/local/include", "-internal-isystem /usr/bin/../lib/clang/3.9.0/include", "-internal-externc-isystem /include", "-internal-externc-isystem /usr/include", "-fdeprecated-macro", "-fdebug-compilation-dir ~/.cache/deoplete/build/", "-ferror-limit 19", "-fmessage-length 176", "-fobjc-runtime=gcc", "-fcxx-exceptions", "-fexceptions", "-fdiagnostics-show-option", "-fcolor-diagnostics", "-o", "-", "-x c++" ]
+    else
+
+Plug 'https://github.com/roxma/nvim-completion-manager.git' " asynchronous completion
+set shortmess+=c
+let g:cm_matcher = {'module': 'cm_matchers.fuzzy_matcher', 'case': 'smartcase'}
+let g:cm_auto_popup = 0
+
+endif
+
 else
     let use_completor = 1
     if use_completor
@@ -328,6 +342,8 @@ Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
 
 "Plug 'https://github.com/baabelfish/nvim-nim.git' " NIM language
 
+Plug 'https://github.com/dhruvasagar/vim-table-mode'
+
 call plug#end()
 
 if has('nvim') && use_deoplete
@@ -373,40 +389,19 @@ endif
 "    nnoremap <silent> [unite]f :UniteWithProjectDir -buffer-name=files -start-insert -resume file_rec<CR>
     nnoremap <silent> [unite]F :UniteResume files<CR>
 
-call denite#custom#map(
-	      \ 'insert',
-	      \ '<Esc>',
-	      \ '<denite:enter_mode:normal>',
-	      \ 'noremap'
-	      \)
-call denite#custom#map(
-	      \ 'insert',
-	      \ '<Down>',
-	      \ '<denite:move_to_next_line>',
-	      \ 'noremap'
-	      \)
-	call denite#custom#map(
-	      \ 'insert',
-	      \ '<Up>',
-	      \ '<denite:move_to_previous_line>',
-	      \ 'noremap'
-\)
-call denite#custom#map(
-	      \ 'normal',
-	      \ '<Down>',
-	      \ '<denite:move_to_next_line>',
-	      \ 'noremap'
-	      \)
-	call denite#custom#map(
-	      \ 'normal',
-	      \ '<Up>',
-	      \ '<denite:move_to_previous_line>',
-	      \ 'noremap'
-\)
-	call denite#custom#source(
-	\ 'file_rec', 'sorters', ['sorter_rank'])
-	call denite#custom#source(
-	\ 'file_rec', 'matchers', ['matcher_substring', 'matcher_ignore_globs'])
+    call denite#custom#map('insert', '<Esc>', '<denite:enter_mode:normal>', 'noremap')
+    call denite#custom#map('insert', '<Down>', '<denite:move_to_next_line>', 'noremap')
+	call denite#custom#map('insert', '<Up>', '<denite:move_to_previous_line>', 'noremap')
+    call denite#custom#map('insert', '<PageDown>', '<denite:scroll_page_forwards>', 'noremap')
+	call denite#custom#map('insert', '<PageUp>', '<denite:scroll_page_backwards>', 'noremap')
+    
+    call denite#custom#map('normal', '<Down>', '<denite:move_to_next_line>', 'noremap')
+	call denite#custom#map('normal', '<Up>', '<denite:move_to_previous_line>', 'noremap')
+    call denite#custom#map('normal', '<PageDown>', '<denite:scroll_page_forwards>', 'noremap')
+	call denite#custom#map('normal', '<PageUp>', '<denite:scroll_page_backwards>', 'noremap')
+
+	call denite#custom#source('file_rec', 'sorters', ['sorter_rank'])
+    call denite#custom#source('file_rec', 'matchers', ['matcher_substring', 'matcher_ignore_globs'])
 
     nnoremap <silent> [unite]f :DeniteProjectDir -buffer-name=files -resume file_rec<CR>
 
@@ -587,7 +582,6 @@ call denite#custom#map(
 
     call unite#custom#action('giti/log', 'diff_pandoc_preview', s:pandoc_diff_action)
     unlet s:pandoc_diff_action
-
 
 
 filetype plugin indent on
