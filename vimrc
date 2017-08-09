@@ -30,6 +30,19 @@ Plug 'https://github.com/Shougo/vimproc', { 'do': 'make -f make_unix.mak' }
 " UNITE
 Plug 'https://github.com/Shougo/unite.vim'
 
+" use this for Unite file_list
+"
+function! FindFileSearchUp(file_name)
+    " From our current directory, search up for file list
+    let l:file_name = findfile(a:file_name, '.;/') " must be somewhere above us
+    let l:file_name = fnamemodify(l:file_name, ':p')    " get the full path
+    if filereadable(l:file_name)
+        return l:file_name
+    else
+        return a:file_name
+    endif
+endfunction
+
 Plug 'https://github.com/Shougo/unite-outline'
 Plug 'https://github.com/Shougo/unite-help'
 Plug 'https://github.com/Shougo/unite-session'
@@ -74,94 +87,47 @@ Plug 'https://github.com/romgrk/vimfiler-prompt.git'
 
 
 " Code completion
-let use_deoplete = 1
-
-if has('nvim')
     
-if use_deoplete
-    Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-        let g:deoplete#enable_at_startup = 1
-
-    " Plug 'https://github.com/carlitux/deoplete-ternjs'        " Javascript completion - Not programming in Javascript
-    Plug 'https://github.com/zchee/deoplete-jedi'             " Python completion
-    Plug 'https://github.com/zchee/deoplete-clang'            " C/C++ completion
-        " libclang shared library path
-        let g:deoplete#sources#clang#libclang_path = '/nix/store/by9vyj90qdjid6rgbqkx4g8scwfkjkwp-clang-3.9.1/lib/libclang.so'
-
-        " clang builtin header path
-        let g:deoplete#sources#clang#clang_header = '/nix/store/by9vyj90qdjid6rgbqkx4g8scwfkjkwp-clang-3.9.1/include'
-
-        " C or C++ standard version
-        let g:deoplete#sources#clang#std#c = 'c11'
-        " or c++
-        let g:deoplete#sources#clang#std#cpp = 'c++1z'
-
-        " alphabetical sort order
-        let g:deoplete#sources#clang#sort_algo = 'alphabetical'
-
-        " compile_commands.json directory path
-        let g:deoplete#sources#clang#clang_complete_database = '~/.cache/deoplete-clang/build/'
-
-        " default flags
-        let g:deoplete#sources#clang#flags = [ "-cc1", "-triple x86_64-unknown-linux-gnu", "-E", "-disable-free", "-disable-llvm-verifier", "-main-file-name", "-mrelocation-model static", "-mthread-model posix", "-mdisable-fp-elim", "-fmath-errno", "-masm-verbose", "-mconstructor-aliases", "-munwind-tables", "-fuse-init-array", "-target-cpu x86-64", "-v", "-dwarf-column-info", "-debugger-tuning=gdb", "-resource-dir /usr/bin/../lib/clang/3.9.0", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu", "-internal-isystem /usr/bin/../lib64/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward", "-internal-isystem /usr/local/include", "-internal-isystem /usr/bin/../lib/clang/3.9.0/include", "-internal-externc-isystem /include", "-internal-externc-isystem /usr/include", "-fdeprecated-macro", "-fdebug-compilation-dir ~/.cache/deoplete/build/", "-ferror-limit 19", "-fmessage-length 176", "-fobjc-runtime=gcc", "-fcxx-exceptions", "-fexceptions", "-fdiagnostics-show-option", "-fcolor-diagnostics", "-o", "-", "-x c++" ]
-    else
+" Requires vim8 with has('python') or has('python3')
+" Requires the installation of msgpack-python. (pip install msgpack-python)
+if !has('nvim')
+    Plug 'roxma/vim-hug-neovim-rpc'
+endif
 
 Plug 'https://github.com/roxma/nvim-completion-manager.git' " asynchronous completion
-set shortmess+=c
-let g:cm_matcher = {'module': 'cm_matchers.fuzzy_matcher', 'case': 'smartcase'}
-let g:cm_auto_popup = 0
+    set shortmess+=c
+    let g:cm_matcher = {'module': 'cm_matchers.fuzzy_matcher', 'case': 'smartcase'}
+    let g:cm_auto_popup = 0
+    inoremap <c-c> <ESC>
+    inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+    imap <c-g> <Plug>(cm_force_refresh)
+Plug 'https://github.com/othree/csscomplete.vim'
+"autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
+Plug 'https://github.com/roxma/clang_complete.git'
+    let g:clang_library_path='/nix/store/fg9ky6lziiwgy0clf41q9vivy31h3aw9-clang-3.9.1/lib'
+    au FileType c,cpp  nmap gd <Plug>(clang_complete_goto_declaration)
+" Compiler options can be configured in a .clang_complete file in each project root. Example of .clang_complete file:
+" -DDEBUG
+" -include ../config.h
+" -I../common
+" -I/usr/include/c++/4.5.3/
+" -I/usr/include/c++/4.5.3/x86_64-slackware-linux/
+" 
+"     Makefile example for auto-generating .clang_complete
+" 
+" .clang_complete: Makefile
+" 	echo $(CXXFLAGS) > $@
+" 
+" If you are using cmake, unfortunately, I don't have a decent hack. This might work. Currently I use make VERBOSE=1
+" to show the compile command and then edit the .clang_complete manually.    
 
-endif
+Plug 'https://github.com/Shougo/neco-vim.git'
+Plug 'https://github.com/jsfaint/gen_tags.vim.git'
+Plug 'https://github.com/Shougo/neoinclude.vim.git'
 
-else
-    let use_completor = 1
-    if use_completor
-    Plug 'maralla/completor.vim'
-    else
-    Plug 'https://github.com/Valloric/YouCompleteMe', { 'do': 'python2 install.py --clang-completer' } " C/C++ completion
-        let g:ycm_confirm_extra_conf = 0
-        let g:ycm_server_keep_logfiles = 1
-        let g:ycm_server_log_level = 'critical'
-
-        " Map <leader>jd to YcmCompleter's goto definition or declaration
-        nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-
-        let g:ycm_filetype_specific_completion_to_disable = {'unite' : 1}
-
-        let g:ycm_autoclose_preview_window_after_completion = 1
-        let g:ycm_autoclose_preview_window_after_insertion = 1
-
-        " YCM removes all signs in the buffer when updating its signs.
-        " Disabling YCM's signs since highlighting itself is good enough.
-        let g:ycm_enable_diagnostic_signs = 0
-
-        " Workaround the YCM bug. YCM should use erlang semantic completion engine,
-        " but it uses it only from the begining of typing, then it switches to a garbage.
-        " https://github.com/Valloric/YouCompleteMe/issues/3
-        "let g:ycm_filetype_blacklist = {'erlang' : 1}
-
-        let g:ycm_concealing_delimiters = ['⟪', '⟫']
-
-        let g:ycm_semantic_triggers =  {
-                    \   'c' : ['->', '.'],
-                    \   'objc' : ['->', '.'],
-                    \   'ocaml' : ['.', '#'],
-                    \   'cpp,objcpp' : ['->', '.', '::'],
-                    \   'perl' : ['->'],
-                    \   'php' : ['->', '::'],
-                    \   'cs,java,javascript,d,vim,python,perl6,scala,vb,elixir,go' : ['.'],
-                    \   'ruby' : ['.', '::'],
-                    \   'lua' : ['.', ':'],
-                    \   'erlang' : [':'],
-                    \ }
-
-        let g:ycm_global_ycm_extra_conf = '~/.vim/plugged/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
-
-    Plug 'https://github.com/davidhalter/jedi-vim.git'        " Python completion
-    " Plug 'https://github.com/marijnh/tern_for_vim.git'        " JavaScript completion - Not programming in JavaScript
-    endif
-endif
-"Plug 'https://github.com/Rip-Rip/clang_complete.git'
+"Plug 'https://github.com/marijnh/tern_for_vim.git'        " JavaScript completion - Not programming in JavaScript
+"Plug 'https://github.com/roxma/clang_complete.git'
 "Plug 'https://github.com/jimenezrick/vimerl.git'
 "Plug 'https://github.com/osyo-manga/vim-snowdrop.git'
 "Plug 'https://github.com/vim-erlang/vim-erlang-omnicomplete'
@@ -193,15 +159,6 @@ else
 endif
 
 " Plug 'https://github.com/w0rp/ale.git' " Neomake and Syntastic replacement
-
-Plug 'https://github.com/Shougo/denite.nvim.git'    " fast file_rec
-Plug 'https://github.com/ozelentok/denite-gtags.git'
-    nnoremap <leader>d :DeniteCursorWord -buffer-name=gtags_def gtags_def<cr>
-    nnoremap <leader>r :DeniteCursorWord -buffer-name=gtags_ref gtags_ref<cr>
-    nnoremap <leader>g :DeniteCursorWord -buffer-name=gtags_grep gtags_grep<cr>
-    nnoremap <leader>t :Denite -buffer-name=gtags_completion gtags_completion<cr>
-    nnoremap <leader>f :Denite -buffer-name=gtags_file gtags_file<cr>
-    nnoremap <leader>p :Denite -buffer-name=gtags_path gtags_path<cr>
 
 " Text Objects
 Plug 'https://github.com/wellle/targets.vim.git' " di', cin), da, ... many targets
@@ -257,7 +214,7 @@ Plug 'https://github.com/chrisbra/NrrwRgn.git' " narrow region: \nr
 
 Plug 'https://github.com/tommcdo/vim-kangaroo.git' " manual jump stack: zp, zP
 
-Plug 'https://github.com/pgdouyon/vim-evanesco.git' " replacement for vim-oblique - improved / search
+"Plug 'https://github.com/pgdouyon/vim-evanesco.git' " replacement for vim-oblique - improved / search, mark.vim is better
 
 "Plug 'https://github.com/chrisbra/vim-diff-enhanced' " :EnhancedDiff ...
 "    " If started In Diff-Mode set diffexpr (plugin not loaded yet)
@@ -344,12 +301,17 @@ Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
 
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
 
+Plug 'https://github.com/rhysd/clever-f.vim.git'
+    let g:clever_f_ignore_case = 1
+    let g:clever_f_show_prompt = 1
+
+Plug 'https://github.com/Tuxdude/mark.vim'
+
 call plug#end()
 
-if has('nvim') && use_deoplete
-    " deoplete needs to call this after plug#end()
-    silent call deoplete#custom#set('_', 'matchers', ['matcher_full_fuzzy'])
-endif
+    let g:dutyl_stdImportPaths=['/nix/store/m1b6nmpb11mjhgw59h7az9ay88jcxmhw-dmd-2.070.2/include']
+	call dutyl#register#tool('dcd-client', '/home/milan/dev/dlang/DCD/bin/dcd-client')
+	call dutyl#register#tool('dcd-server', '/home/milan/dev/dlang/DCD/bin/dcd-server')
 
     " <F2>: Save session
     nnoremap <F2> :<C-u>UniteSessionSave
@@ -386,29 +348,12 @@ endif
     nnoremap <silent> [unite]d :UniteWithProjectDir -buffer-name=change-cwd -default-action=lcd neomru/directory<CR>
 
     " Quick file search
-"    nnoremap <silent> [unite]f :UniteWithProjectDir -buffer-name=files -start-insert -resume file_rec<CR>
-    nnoremap <silent> [unite]F :UniteResume files<CR>
-
-    call denite#custom#map('insert', '<Esc>', '<denite:enter_mode:normal>', 'noremap')
-    call denite#custom#map('insert', '<Down>', '<denite:move_to_next_line>', 'noremap')
-	call denite#custom#map('insert', '<Up>', '<denite:move_to_previous_line>', 'noremap')
-    call denite#custom#map('insert', '<PageDown>', '<denite:scroll_page_forwards>', 'noremap')
-	call denite#custom#map('insert', '<PageUp>', '<denite:scroll_page_backwards>', 'noremap')
-    
-    call denite#custom#map('normal', '<Down>', '<denite:move_to_next_line>', 'noremap')
-	call denite#custom#map('normal', '<Up>', '<denite:move_to_previous_line>', 'noremap')
-    call denite#custom#map('normal', '<PageDown>', '<denite:scroll_page_forwards>', 'noremap')
-	call denite#custom#map('normal', '<PageUp>', '<denite:scroll_page_backwards>', 'noremap')
-
-	call denite#custom#source('file_rec', 'sorters', ['sorter_rank'])
-    call denite#custom#source('file_rec', 'matchers', ['matcher_substring', 'matcher_ignore_globs'])
-
-    nnoremap <silent> [unite]f :DeniteProjectDir -buffer-name=files -resume file_rec<CR>
-
+    nnoremap <silent> [unite]f :execute 'UniteWithBufferDir -buffer-name=file_list -resume file_list:'. escape(FindFileSearchUp('filelist.txt'), ':') .''<CR>
+"   nnoremap <silent> [unite]F :UniteResume files<CR>
 
     " Search files with the same base name as has the currently selected buffer
-    nnoremap <silent> [unite]ff :execute 'UniteWithProjectDir -buffer-name=files -resume -input='.expand('%:t:r').' file_rec'<CR>
-    nnoremap <silent> [unite]fg :execute 'UniteWithProjectDir -buffer-name=files -resume -input='.expand('%:t:r').' gtags/path'<CR>
+    nnoremap <silent> [unite]fr :execute 'UniteWithProjectDir -buffer-name=file_rec -resume -input='.expand('%:t:r').' file_rec'<CR>
+    nnoremap <silent> [unite]fg :execute 'UniteWithProjectDir -buffer-name=file_gtags_path -resume -input='.expand('%:t:r').' gtags/path'<CR>
 
     " Quick grep from cwd
     nnoremap <silent> [unite]g :Unite -buffer-name=grep grep<CR>
@@ -491,6 +436,10 @@ endif
         if unite.buffer_name =~# '^search_file'
             imap <buffer> <C-_> <Plug>(unite_exit)
             nmap <buffer> <C-_> <Plug>(unite_exit)
+        endif
+
+        if unite.buffer_name =~# '^file_list'
+            nmap <buffer> <C-r> :silent exec '!find . -not \( -name .git -prune -o -name "*.o" -prune \) -type f -print \| sort > filelist.txt'<cr><C-l>
         endif
 
     endfunction
@@ -941,7 +890,7 @@ set showbreak=↪
 function! InsertStatuslineColor(mode)
   if a:mode == 'i'
     hi statusline ctermbg=lightblue
-    set cursorcolumn
+"   set cursorcolumn
   elseif a:mode == 'r'
     hi statusline ctermbg=red
   else
@@ -951,7 +900,7 @@ endfunction
 
 function! InsertLeaveActions()
   hi statusline ctermbg=green
-  set nocursorcolumn
+" set nocursorcolumn
 endfunction
 
 au InsertEnter * call InsertStatuslineColor(v:insertmode)
@@ -966,5 +915,9 @@ inoremap <c-c> <c-o>:call InsertLeaveActions()<cr><c-c>
 
 if has('nvim')
   set icm=nosplit
+  set mouse=a
 endif
+
+autocmd FileType c,cpp set equalprg=clang-format
+autocmd BufWritePre c,cpp :silent normal gg=G``
 
