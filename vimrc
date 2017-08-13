@@ -860,6 +860,9 @@ set breakindent
 highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
 
 highlight SpellBad ctermfg=202 ctermbg=NONE cterm=NONE
+highlight SpellCap ctermfg=202 ctermbg=NONE cterm=NONE
+highlight SpellRare ctermfg=202 ctermbg=NONE cterm=NONE
+highlight SpellLocal ctermfg=202 ctermbg=NONE cterm=NONE
 
 " Default is some unreadable light-blue:
 "  term=standout ctermfg=15 ctermbg=81 guifg=#ffffff guibg=#287ef
