@@ -34,7 +34,7 @@ Plug 'https://github.com/Shougo/unite.vim'
 "
 function! FindFileSearchUp(file_name)
     " From our current directory, search up for file list
-    let l:file_name = findfile(a:file_name, '.;/') " must be somewhere above us
+    let l:file_name = findfile(a:file_name, '.;/')      " must be somewhere above us
     let l:file_name = fnamemodify(l:file_name, ':p')    " get the full path
     if filereadable(l:file_name)
         return l:file_name
@@ -97,7 +97,7 @@ endif
 Plug 'https://github.com/roxma/nvim-completion-manager.git' " asynchronous completion
     set shortmess+=c
     let g:cm_matcher = {'module': 'cm_matchers.fuzzy_matcher', 'case': 'smartcase'}
-    let g:cm_auto_popup = 0
+    let g:cm_auto_popup = 1
     inoremap <c-c> <ESC>
     inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
     inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
@@ -105,7 +105,7 @@ Plug 'https://github.com/roxma/nvim-completion-manager.git' " asynchronous compl
 Plug 'https://github.com/othree/csscomplete.vim'
 "autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
 Plug 'https://github.com/roxma/clang_complete.git'
-    let g:clang_library_path='/nix/store/fg9ky6lziiwgy0clf41q9vivy31h3aw9-clang-3.9.1/lib'
+    let g:clang_library_path='/run/current-system/sw/lib'
     au FileType c,cpp  nmap gd <Plug>(clang_complete_goto_declaration)
 " Compiler options can be configured in a .clang_complete file in each project root. Example of .clang_complete file:
 " -DDEBUG
