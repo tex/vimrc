@@ -202,7 +202,6 @@ Plug 'https://github.com/airblade/vim-rooter.git' " changes working directory to
     let g:rooter_silent_chdir = 1
 
 Plug 'https://github.com/gcavallanti/vim-noscrollbar.git' " scrollbar
-    set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
 
 Plug 'https://github.com/junegunn/rainbow_parentheses.vim.git' " rainbow parentheses
     au Syntax * RainbowParentheses
@@ -295,7 +294,7 @@ Plug 'https://github.com/Shougo/echodoc.vim.git'
 
 Plug 'https://github.com/thinca/vim-qfreplace.git'
 
-Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
+"Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
 
 "Plug 'https://github.com/baabelfish/nvim-nim.git' " NIM language
 
@@ -307,11 +306,14 @@ Plug 'https://github.com/rhysd/clever-f.vim.git'
 
 Plug 'https://github.com/Tuxdude/mark.vim'
 
+"Plug 'https://github.com/ckarnell/history-traverse.git'
+Plug 'https://github.com/tex/vim-bufsurf.git'
+
 call plug#end()
 
-    let g:dutyl_stdImportPaths=['/nix/store/m1b6nmpb11mjhgw59h7az9ay88jcxmhw-dmd-2.070.2/include']
-	call dutyl#register#tool('dcd-client', '/home/milan/dev/dlang/DCD/bin/dcd-client')
-	call dutyl#register#tool('dcd-server', '/home/milan/dev/dlang/DCD/bin/dcd-server')
+    " let g:dutyl_stdImportPaths=['/nix/store/m1b6nmpb11mjhgw59h7az9ay88jcxmhw-dmd-2.070.2/include']
+	" call dutyl#register#tool('dcd-client', '/home/milan/dev/dlang/DCD/bin/dcd-client')
+	" call dutyl#register#tool('dcd-server', '/home/milan/dev/dlang/DCD/bin/dcd-server')
 
     " <F2>: Save session
     nnoremap <F2> :<C-u>UniteSessionSave
@@ -371,8 +373,8 @@ call plug#end()
     " Quick marks list
     nnoremap <silent> [unite]M :Unite -buffer-name=marks mark<CR>
 
-    " Quick find
-    nnoremap <silent> [unite]n :UniteWithProjectDir -buffer-name=find find:.<CR>
+    " Bufsurf
+    nnoremap <silent> [unite]n :Unite -buffer-name=bufsurf bufsurf<CR>
 
     " Quick commands
     nnoremap <silent> [unite]c :Unite -buffer-name=commands command<CR>
@@ -892,26 +894,24 @@ set showbreak=↪
 
 function! InsertStatuslineColor(mode)
   if a:mode == 'i'
-    hi statusline ctermbg=lightblue
+    hi statusline ctermbg=lightblue ctermfg=black
 "   set cursorcolumn
   elseif a:mode == 'r'
-    hi statusline ctermbg=red
+    hi statusline ctermbg=red ctermfg=black
   else
-    hi statusline ctermbg=lightred
+    hi statusline ctermbg=green ctermfg=black
   endif
 endfunction
 
 function! InsertLeaveActions()
-  hi statusline ctermbg=green
+  hi statusline ctermbg=green ctermfg=black
 " set nocursorcolumn
 endfunction
 
 au InsertEnter * call InsertStatuslineColor(v:insertmode)
 au InsertChange * call InsertStatuslineColor(v:insertmode)
 au InsertLeave * call InsertLeaveActions()
-
-" default the statusline to green when entering Vim
-hi statusline ctermbg=green
+call InsertLeaveActions()
 
 " to handle exiting insert mode via a control-C
 inoremap <c-c> <c-o>:call InsertLeaveActions()<cr><c-c>
@@ -923,4 +923,15 @@ endif
 
 autocmd FileType c,cpp set equalprg=clang-format
 autocmd BufWritePre c,cpp :silent normal gg=G``
+
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
+" Back history indicator:
+"set statusline+=%{w:current_buffer_index!=0?'←':'\ '}
+" Forward history indicator:
+"set statusline+=%{w:current_buffer_index<(len(w:buffer_history_list)-1)?'→':'\ '}
+
+nnoremap <c-n> :BufSurfBack<cr>
+nnoremap <c-m> :BufSurfForward<cr>
+let g:BufSurfIgnore = "vimfiler"
+let g:BufSurfAppearOnce = 0
 
