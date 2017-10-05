@@ -75,12 +75,13 @@ Plug 'https://github.com/romgrk/vimfiler-prompt.git'
     let g:vimfiler_split_rule="botright"
     let g:vimfiler_force_overwrite_statusline = 0
     let g:vimfiler_enable_auto_cd = 0
-    let g:vimfiler_time_format = "%y/%m/%d %H:%M "  " The space at the end is important (my terminal cuts off last column?...)
+    let g:vimfiler_time_format = "%y/%m/%d %H:%M"
 
-    nnoremap <silent> - :VimFilerBufferDir -buffer-name=vimfiler<CR>
+    nnoremap <silent> - :VimFilerBufferDir -buffer-name=vimfiler -status<CR>
 
     autocmd FileType vimfiler call s:vimfiler_settings()
     function! s:vimfiler_settings()
+        set signcolumn=no
         nunmap <buffer> <C-i>
         nmap <buffer> i :VimFilerPrompt<CR>
     endfunction
@@ -259,9 +260,13 @@ Plug 'https://github.com/vim-pandoc/vim-pandoc-after.git'| " for Unite outline
     Plug 'https://github.com/Shougo/unite.vim'
     let g:pandoc#after#modules#enabled = ["unite"]
 
-Plug 'https://github.com/tex/vimpreviewpandoc.git' |
-    Plug 'https://github.com/kmnk/vim-unite-giti.git' |
-    Plug 'https://github.com/Shougo/unite.vim'
+"Well, Konqueror is basically abandoned, not working well on NixOs,
+"      Firefox is going south and deprecating Addons/Extensions and the
+"      remote control extension I used is no longer supported with recent
+"      Firefox versions.
+"Plug 'https://github.com/tex/vimpreviewpandoc.git' |
+"    Plug 'https://github.com/kmnk/vim-unite-giti.git' |
+"    Plug 'https://github.com/Shougo/unite.vim'
 
 Plug 'https://github.com/sheerun/vim-polyglot.git' " a collection of programming language packs for Vim
 
@@ -924,11 +929,7 @@ endif
 autocmd FileType c,cpp set equalprg=clang-format
 autocmd BufWritePre c,cpp :silent normal gg=G``
 
-set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
-" Back history indicator:
-"set statusline+=%{w:current_buffer_index!=0?'←':'\ '}
-" Forward history indicator:
-"set statusline+=%{w:current_buffer_index<(len(w:buffer_history_list)-1)?'→':'\ '}
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{w:history_index!=0?'←':'\ '}%{w:history_index<(len(w:history)-1)?'→':'\ '}\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
 
 nnoremap <c-n> :BufSurfBack<cr>
 nnoremap <c-m> :BufSurfForward<cr>
