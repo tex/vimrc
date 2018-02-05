@@ -417,7 +417,7 @@ call plug#end()
     nnoremap <silent> [unite]B :execute 'Unite -buffer-name=buffers -input='.expand('%:t:r').' buffer:-'<CR>
 
     " Quick outline
-    nnoremap <silent> <C-\> :<C-u>Unite -buffer-name=outline -vertical outline<CR>
+    nnoremap <silent> <C-\> :<C-u>Unite -buffer-name=outline -prompt-direction=top -vertical outline<CR>
 
     " Quick sessions (projects)
     nnoremap <silent> [unite]p :<C-u>Unite -buffer-name=sessions session<CR>
@@ -465,7 +465,7 @@ call plug#end()
     nnoremap <silent> [unite]; :Unite -buffer-name=history history/command command<CR>
 
     " Spell suggest
-    nnoremap <silent> z= :Unite -buffer-name=spell_suggest -vertical -winwidth=20 spell_suggest<CR>
+    nnoremap <silent> z= :Unite -buffer-name=spell_suggest -prompt-direction=top -vertical -winwidth=20 spell_suggest<CR>
 
     " Quick gtags references
     autocmd FileType c,cpp,yacc,java,php,asm,erlang,python nnoremap <silent> g[ :Unite -buffer-name=gtags-ref gtags/ref<CR>
