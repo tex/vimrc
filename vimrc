@@ -23,7 +23,8 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'https://github.com/dahu/Vimpeg.git'
+" A memoizing Parsing Expression Grammar parser generator for Vim.
+" Plug 'https://github.com/dahu/Vimpeg.git'
 
 Plug 'https://github.com/Shougo/vimproc', { 'do': 'make -f make_unix.mak' }
 
@@ -73,11 +74,11 @@ Plug 'https://github.com/romgrk/vimfiler-prompt.git'
     let g:unite_kind_file_use_trashbox = 1
     let g:vimfiler_as_default_explorer = 1
     let g:vimfiler_split_rule="botright"
-    let g:vimfiler_force_overwrite_statusline = 0
+    let g:vimfiler_force_overwrite_statusline = 1
     let g:vimfiler_enable_auto_cd = 0
     let g:vimfiler_time_format = "%y/%m/%d %H:%M"
 
-    nnoremap <silent> - :VimFilerBufferDir -buffer-name=vimfiler -status<CR>
+    nnoremap <silent> - :VimFilerBufferDir -buffer-name=vimfiler<CR>
 
     autocmd FileType vimfiler call s:vimfiler_settings()
     function! s:vimfiler_settings()
@@ -99,15 +100,23 @@ Plug 'https://github.com/roxma/nvim-completion-manager.git' " asynchronous compl
     set shortmess+=c
     let g:cm_matcher = {'module': 'cm_matchers.fuzzy_matcher', 'case': 'smartcase'}
     let g:cm_auto_popup = 1
+    let g:cm_complete_start_delay = 1000
     inoremap <c-c> <ESC>
     inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
     inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
     imap <c-g> <Plug>(cm_force_refresh)
 Plug 'https://github.com/othree/csscomplete.vim'
 "autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
-Plug 'https://github.com/roxma/clang_complete.git'
-    let g:clang_library_path='/run/current-system/sw/lib'
-    au FileType c,cpp  nmap gd <Plug>(clang_complete_goto_declaration)
+Plug 'fgrsnau/ncm-otherbuf'
+Plug 'https://github.com/roxma/ncm-clang.git'
+"Plug 'https://github.com/justmao945/vim-clang.git'
+"let g:clang_compilation_database = '.'
+"let g:clang_c_options = '-std=gnu11'
+"let g:clang_cpp_options = '-std=c++14 -stdlib=libc++ -w -I./'
+
+"Plug 'https://github.com/roxma/clang_complete.git'
+"    let g:clang_library_path='/run/current-system/sw/lib'
+"    au FileType c,cpp  nmap gd <Plug>(clang_complete_goto_declaration)
 " Compiler options can be configured in a .clang_complete file in each project root. Example of .clang_complete file:
 " -DDEBUG
 " -include ../config.h
@@ -124,11 +133,10 @@ Plug 'https://github.com/roxma/clang_complete.git'
 " to show the compile command and then edit the .clang_complete manually.    
 
 Plug 'https://github.com/Shougo/neco-vim.git'
-Plug 'https://github.com/jsfaint/gen_tags.vim.git'
+Plug 'https://github.com/jsfaint/gen_tags.vim.git' " nvim-completion-manager source
 Plug 'https://github.com/Shougo/neoinclude.vim.git'
 
 "Plug 'https://github.com/marijnh/tern_for_vim.git'        " JavaScript completion - Not programming in JavaScript
-"Plug 'https://github.com/roxma/clang_complete.git'
 "Plug 'https://github.com/jimenezrick/vimerl.git'
 "Plug 'https://github.com/osyo-manga/vim-snowdrop.git'
 "Plug 'https://github.com/vim-erlang/vim-erlang-omnicomplete'
@@ -136,30 +144,56 @@ Plug 'https://github.com/Shougo/neoinclude.vim.git'
 "Plug 'https://github.com/kchmck/vim-coffee-script'
 "Plug 'https://github.com/xolox/vim-misc.git' " for lua
 
-Plug 'https://github.com/scrooloose/nerdcommenter' " Comments: \ci
-    " Always leave a space between the comment character and the comment
-    let NERDSpaceDelims=1
-
-let use_neomake = 1
-
-if has('nvim') && use_neomake
-    Plug 'https://github.com/neomake/neomake.git'
-    let g:neomake_cpp_enabled_makers = ['clang']
-    let g:neomake_cpp_clang_maker = {
-                \ 'args': ['-std=c++14']
-                \ }
-    augroup vimrc_neomake
-        au!
-        autocmd BufWritePost * Neomake
-    augroup END
+"Plug 'https://github.com/scrooloose/nerdcommenter' " Comments: \ci
+"    " Always leave a space between the comment character and the comment
+"    let NERDSpaceDelims=1
+"
+"    Plug 'https://github.com/neomake/neomake.git'
+"    let g:neomake_cpp_enabled_makers = ['clang']
+"    let g:neomake_cpp_clang_maker = {
+"                \ 'args': ['-std=c++14', '-w', '-I./']
+"                \ }
+"    augroup vimrc_neomake
+"        au!
+"        autocmd BufWritePost * Neomake
+"    augroup END
 "  let g:neomake_verbose = 3
-else
-    Plug 'https://github.com/scrooloose/syntastic' " Syntax checker
-    " Don't use Syntastic on erlang files, vimerl does better job
-    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['erlang'] }
-endif
 
-" Plug 'https://github.com/w0rp/ale.git' " Neomake and Syntastic replacement
+"    Plug 'https://github.com/scrooloose/syntastic' " Syntax checker
+"    " Don't use Syntastic on erlang files, vimerl does better job
+"    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['erlang'] }
+
+
+"Plug 'https://github.com/sbdchd/neoformat.git'
+"augroup fmt
+"  autocmd!
+"  autocmd BufWritePre * undojoin | Neoformat
+"augroup END
+
+
+Plug 'https://github.com/w0rp/ale.git' " Neomake and Syntastic replacement
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_completion_enabled = 0
+let g:ale_sign_column_always = 1
+let g:ale_linters = {
+\   'cpp': ['clang', 'clangcheck', 'clangtidy'],
+\}
+" This does same job as Neoformat
+let g:ale_fixers = {                   
+\   'cpp' : [ 'clang-format' ],
+\}
+let g:ale_fix_on_save = 1
+
+" This depends on ncm-clang
+autocmd BufEnter *.cpp,*.hpp let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
+autocmd BufEnter *.c,*.h   let g:ale_c_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
+
+" This would be needed if my patch to ALE is not accepted.
+" autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
+
+" Bind F8 to fixing problems with ALE
+"  nmap <F8> <Plug>(ale_fix)
 
 " Text Objects
 Plug 'https://github.com/wellle/targets.vim.git' " di', cin), da, ... many targets
@@ -170,6 +204,7 @@ Plug 'https://github.com/kana/vim-textobj-line' " al, il
 Plug 'https://github.com/kana/vim-textobj-indent' " ai, ii, aI, iI
 Plug 'https://github.com/gaving/vim-textobj-argument' " aa, ia
 Plug 'https://github.com/terryma/vim-expand-region' " Shift +, Shift -
+Plug 'https://github.com/kana/vim-operator-user.git'
 
 " Not using it too much. Well, I don't remember last time I used it or needed it.
 " Plug 'https://github.com/atweiden/vim-dragvisuals.git' " visual selection move
@@ -205,10 +240,30 @@ Plug 'https://github.com/airblade/vim-rooter.git' " changes working directory to
 Plug 'https://github.com/gcavallanti/vim-noscrollbar.git' " scrollbar
 
 Plug 'https://github.com/junegunn/rainbow_parentheses.vim.git' " rainbow parentheses
-    au Syntax * RainbowParentheses
+    au Filetype * RainbowParentheses
     let g:rainbow#pairs = [['(', ')'], ['[', ']'], ['{', '}']]
 
+"Interesting concept, but it colors only text, not whole line.
+"Plug 'https://github.com/thiagoalessio/rainbow_levels.vim.git'
+"    au Filetype * RainbowLevelsOn
+"let g:rainbow_levels = [
+"    \{'ctermbg': 232, 'guibg': '#080808'},
+"    \{'ctermbg': 233, 'guibg': '#121212'},
+"    \{'ctermbg': 234, 'guibg': '#1c1c1c'},
+"    \{'ctermbg': 235, 'guibg': '#262626'},
+"    \{'ctermbg': 236, 'guibg': '#303030'},
+"    \{'ctermbg': 237, 'guibg': '#3a3a3a'},
+"    \{'ctermbg': 238, 'guibg': '#444444'},
+"    \{'ctermbg': 239, 'guibg': '#4e4e4e'},
+"    \{'ctermbg': 240, 'guibg': '#585858'}]
+
+Plug 'https://github.com/mechatroner/rainbow_csv.git'
+
 Plug 'https://github.com/kshenoy/vim-signature.git' " toggle, display and navigate marks
+Plug 'https://github.com/Tuxdude/mark.vim'
+
+"Interesting concept, but buggy and slow.
+"Plug 'https://github.com/chrisbra/DynamicSigns.git'
 
 Plug 'https://github.com/chrisbra/NrrwRgn.git' " narrow region: \nr
 
@@ -216,11 +271,11 @@ Plug 'https://github.com/tommcdo/vim-kangaroo.git' " manual jump stack: zp, zP
 
 "Plug 'https://github.com/pgdouyon/vim-evanesco.git' " replacement for vim-oblique - improved / search, mark.vim is better
 
-"Plug 'https://github.com/chrisbra/vim-diff-enhanced' " :EnhancedDiff ...
-"    " If started In Diff-Mode set diffexpr (plugin not loaded yet)
-"    if &diff
-"        let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
-"    endif
+Plug 'https://github.com/chrisbra/vim-diff-enhanced' " :EnhancedDiff ...
+    " If started In Diff-Mode set diffexpr (plugin not loaded yet)
+    if &diff
+        let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
+    endif
 
 Plug 'https://github.com/tmhedberg/matchit.git' " Extended matching with '%'
 
@@ -231,6 +286,8 @@ Plug 'https://github.com/vim-scripts/ShowMultiBase.git' " Display number under c
 Plug 'https://github.com/vimwiki/vimwiki.git', { 'rev' : 'dev' } " vim wiki
     let g:vimwiki_listsyms = '✗○◐●✓'
     let g:vimwiki_list = [{'auto_tags': 1}]
+    let g:vimwiki_table_mappings=0
+    let g:vimwiki_table_auto_fmt=0
 
 " Plug 'https://github.com/itchyny/calendar.vim' " calendar, cool but I'm not using it
 
@@ -245,8 +302,6 @@ Plug 'https://github.com/airblade/vim-gitgutter.git'
     let g:gitgutter_max_signs=99999999
 
 Plug 'https://github.com/jreybert/vimagit.git'
-
-" Plug 'https://github.com/vim-scripts/Conque-GDB.git' " the only usable plugin for debugging with GDB
 
 " Pandoc - Markdown
 Plug 'https://github.com/vim-pandoc/vim-pandoc'
@@ -272,7 +327,7 @@ Plug 'https://github.com/sheerun/vim-polyglot.git' " a collection of programming
 
 Plug 'https://github.com/mbbill/undotree.git' " for visualize undo tree
     nnoremap <C-u> :UndotreeToggle<CR>
-    function g:Undotree_CustomMap()
+    function! g:Undotree_CustomMap()
         nmap <buffer> <S-u> <plug>UndotreeRedo
     endfunc
 
@@ -309,10 +364,14 @@ Plug 'https://github.com/rhysd/clever-f.vim.git'
     let g:clever_f_ignore_case = 1
     let g:clever_f_show_prompt = 1
 
-Plug 'https://github.com/Tuxdude/mark.vim'
-
 "Plug 'https://github.com/ckarnell/history-traverse.git'
 Plug 'https://github.com/tex/vim-bufsurf.git'
+
+" Plug 'https://github.com/vim-scripts/Conque-GDB.git' " the only usable plugin for debugging with GDB
+Plug 'https://github.com/mechatroner/minimal_gdb.git'
+
+Plug 'https://github.com/drzel/vim-scroll-off-fraction.git'
+    let g:scroll_off_fraction = 0.25
 
 call plug#end()
 
@@ -324,9 +383,24 @@ call plug#end()
     nnoremap <F2> :<C-u>UniteSessionSave
 
     call unite#custom#profile('default', 'context', {
-                \   'prompt_direction': 'top',
+                \   'prompt_direction': 'below',
                 \   'marked_icon': '✓'
                 \ })
+
+"		" Start insert mode in unite-action buffer.
+"		call unite#custom#profile('action', 'context', {
+"		\   'start_insert' : 1
+"		\ })
+"
+"		" Set "-no-quit" automatically in grep unite source.
+"		call unite#custom#profile('source/grep', 'context', {
+"		\   'no_quit' : 1
+"		\ })
+"
+"		" Use start insert by default.
+"		call unite#custom#profile('default', 'context', {
+"		\   'start_insert' : 1
+"		\ })
 
     " Map space to the prefix for Unite
     nnoremap [unite] <Nop>
@@ -355,7 +429,7 @@ call plug#end()
     nnoremap <silent> [unite]d :UniteWithProjectDir -buffer-name=change-cwd -default-action=lcd neomru/directory<CR>
 
     " Quick file search
-    nnoremap <silent> [unite]f :execute 'UniteWithBufferDir -buffer-name=file_list -resume file_list:'. escape(FindFileSearchUp('filelist.txt'), ':') .''<CR>
+    nnoremap <silent> [unite]f :execute 'UniteWithBufferDir -start-insert -buffer-name=file_list -resume file_list:'. escape(FindFileSearchUp('filelist.txt'), ':') .''<CR>
 "   nnoremap <silent> [unite]F :UniteResume files<CR>
 
     " Search files with the same base name as has the currently selected buffer
@@ -446,7 +520,10 @@ call plug#end()
         endif
 
         if unite.buffer_name =~# '^file_list'
-            nmap <buffer> <C-r> :silent exec '!find . -not \( -name .git -prune -o -name "*.o" -prune \) -type f -print \| sort > filelist.txt'<cr><C-l>
+            imap <buffer> <C-r> <esc>:silent exec '!find . -not \( -name .git -prune -o -name "*.o" -prune \) -type f -print > filelist.txt'<cr>
+                        \ :silent exec '!sort filelist.txt -o filelist.txt'<cr><C-l>
+            nmap <buffer> <C-r> :silent exec '!find . -not \( -name .git -prune -o -name "*.o" -prune \) -type f -print > filelist.txt'<cr>
+                        \ :silent exec '!sort filelist.txt -o filelist.txt'<cr><C-l>
         endif
 
     endfunction
@@ -468,20 +545,23 @@ call plug#end()
     let g:unite_source_file_mru_time_format = ''
 
     " speed up recursive file searches and ignore patters in .gitignore
-    if executable('ag')
-        let g:unite_source_rec_async_command = [ 'ag', '--follow', '--nogroup', '--hidden', '--nocolor', '-g', '' ]
-        let g:unite_source_grep_command = 'ag'
-        let g:unite_source_grep_default_opts =
-                    \ '-i --vimgrep --hidden --ignore ' .
-                    \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
-        let g:unite_source_grep_recursive_opt = ''
-    endif
+"    if executable('ag')
+"        let g:unite_source_rec_async_command = [ 'ag', '--follow', '--nogroup', '--hidden', '--nocolor', '-g', '' ]
+"        let g:unite_source_grep_command = 'ag'
+"        let g:unite_source_grep_default_opts =
+"                    \ '-i --vimgrep --hidden --ignore ' .
+"                    \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
+"        let g:unite_source_grep_recursive_opt = ''
+"    endif
 
     call unite#custom_default_action('directory,directory_mru', 'cd')
 
     " Using unite-todo plugin, change notes format to 'markdown' (actually 'pandoc', since I have pandoc plugins installed):
 
     let g:unite_todo_note_suffix = 'markdown'
+
+    " To be able to select firs line next to input in input mode
+    let g:unite_enable_auto_select = 0
 
     "===============================================================================
     " Unite Sessions
@@ -567,9 +647,6 @@ set autoread
 "  autocmd BufWinLeave * if &modifiable && &ft!='unite' | call clearmatches() | endif
 "augroup END
 
-" Minimal number of screen lines to keep above and below the cursor
-set scrolloff=5
-
 " Min width of the number column to the left
 " set numberwidth=1
 
@@ -639,7 +716,6 @@ set smarttab
 " Text display settings
 set linebreak
 " set textwidth=80
-set autoindent
 set nowrap
 set whichwrap+=h,l,<,>,[,]
 
@@ -750,11 +826,16 @@ inoremap <C-Down> <Esc><C-e><Insert><Right>
 " Disabled for now because <Tab> is equal to <C-i> which I use heavily
 " nnoremap <Tab> %
 
+nnoremap cd :lcd %:p:h<bar>pwd<cr>
+
 " Let PgUp and PgDown scroll up to first/last line.
 nnoremap <pageup> <c-u><c-u>
 nnoremap <pagedown> <c-d><c-d>
 
-nnoremap cd :lcd %:p:h<bar>pwd<cr>
+nnoremap <A-Up> <C-w>k
+nnoremap <A-Down> <C-w>j
+nnoremap <A-Left> <C-w>h
+nnoremap <A-Right> <C-w>l
 
 nnoremap <leader>1 1<C-w>w
 nnoremap <leader>2 2<C-w>w
@@ -788,15 +869,15 @@ vmap r "_dP
 autocmd BufEnter * :syntax sync fromstart
 
 " Enable omni completion
-augroup MyAutoCmd
-  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-  autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-  autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
-augroup END
+"augroup MyAutoCmd
+"  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+"  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+"  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+"  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+"  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+"  autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+"  autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
+"augroup END
 
 " Show marks columns even when there are no signs shown.
 autocmd BufEnter * sign define dummy
@@ -858,9 +939,13 @@ endif
 " TODO >>> Play Erlang from within Vim
 " erl -noshell -eval 'R = 16#1F+16#A0, io:format("~.16B~n", [R])' -s erlang halt
 
-"setl foldmethod=indent foldnestmax=2 foldlevelstart=99
+set foldmethod=indent
+set foldenable
 
 set breakindent
+
+" Better new line indentation for C, CPP files.
+au FileType c,cpp :set cinoptions+=L0
 
 " I like the darkblue colorscheme but don't like its LineNr being green.
 " Prefer non-obtrusive darkgrey.
@@ -882,11 +967,12 @@ highlight DiffText   ctermfg=9 ctermbg=NONE cterm=NONE
 
 " I don't know what plugin sets the SignColumn to ctermbg=242
 " which I hate since it also messes up the vim-gitgutter.
-highligh clear SignColumn
+highlight clear SignColumn
 
 " Default is unreadable
 highlight Visual ctermfg=81 ctermbg=21
 highlight MatchParn ctermfg=2 ctermbg=NONE cterm=NONE
+highlight CursorLine cterm=bold ctermfg=black ctermbg=lightblue
 
 set ffs=unix,dos,mac
 
@@ -894,7 +980,6 @@ set ffs=unix,dos,mac
 set sc nosc
 
 set linebreak
-set breakindent
 set showbreak=↪
 
 function! InsertStatuslineColor(mode)
@@ -926,13 +1011,37 @@ if has('nvim')
   set mouse=a
 endif
 
-autocmd FileType c,cpp set equalprg=clang-format
-autocmd BufWritePre c,cpp :silent normal gg=G``
+function! LinterStatus() abort
+    let l:counts = ale#statusline#Count(bufnr(''))
 
-set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{w:history_index!=0?'←':'\ '}%{w:history_index<(len(w:history)-1)?'→':'\ '}\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
+    let l:all_errors = l:counts.error + l:counts.style_error
+    let l:all_non_errors = l:counts.total - l:all_errors
+
+    return l:counts.total == 0 ? 'OK' : printf(
+    \   '%dW %dE',
+    \   all_non_errors,
+    \   all_errors
+    \)
+endfunction
+
+function! HistoryStatus() abort
+    if exists("w:history_index") && exists("w:history")
+        return printf('%s %s',
+                    \ w:history_index != 0 ? '←' : ' ',
+                    \ w:history_index < (len(w:history) - 1) ? '→' : ' ')
+    else
+        return '   '
+    endif
+endfunction
+
+set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{LinterStatus()}\ %{HistoryStatus()}\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
 
 nnoremap <c-n> :BufSurfBack<cr>
 nnoremap <c-m> :BufSurfForward<cr>
 let g:BufSurfIgnore = "vimfiler"
 let g:BufSurfAppearOnce = 0
+
+set signcolumn=yes
+
+
 
