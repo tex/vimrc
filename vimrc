@@ -185,11 +185,8 @@ let g:ale_fixers = {
 \}
 let g:ale_fix_on_save = 1
 
-" This depends on ncm-clang
-autocmd BufEnter *.cpp,*.hpp let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
-autocmd BufEnter *.c,*.h   let g:ale_c_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
-
 " This would be needed if my patch to ALE is not accepted.
+" This depends on ncm-clang
 " autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
 
 " Bind F8 to fixing problems with ALE
@@ -339,6 +336,12 @@ Plug 'https://github.com/Lokaltog/vim-easymotion.git' " for easy motion
 " Plug 'https://github.com/hkupty/iron.nvim.git' " REPL interact
 Plug 'https://github.com/metakirby5/codi.vim.git' " REPL scratch pad
     let g:codi#rightalign=0
+     let g:codi#interpreters = {
+           \ 'python': {
+               \ 'bin': 'nvim-python3',
+               \ 'prompt': '^\(>>>\|\.\.\.\) ',
+               \ },
+           \ }
 
 Plug 'https://github.com/machakann/vim-highlightedyank.git'
 
@@ -373,7 +376,10 @@ Plug 'https://github.com/mechatroner/minimal_gdb.git'
 Plug 'https://github.com/drzel/vim-scroll-off-fraction.git'
     let g:scroll_off_fraction = 0.25
 
+Plug 'https://github.com/beloglazov/vim-online-thesaurus' " \K
+
 call plug#end()
+
 
     " let g:dutyl_stdImportPaths=['/nix/store/m1b6nmpb11mjhgw59h7az9ay88jcxmhw-dmd-2.070.2/include']
 	" call dutyl#register#tool('dcd-client', '/home/milan/dev/dlang/DCD/bin/dcd-client')
@@ -985,7 +991,6 @@ set showbreak=↪
 function! InsertStatuslineColor(mode)
   if a:mode == 'i'
     hi statusline ctermbg=lightblue ctermfg=black
-"   set cursorcolumn
   elseif a:mode == 'r'
     hi statusline ctermbg=red ctermfg=black
   else
@@ -995,7 +1000,6 @@ endfunction
 
 function! InsertLeaveActions()
   hi statusline ctermbg=green ctermfg=black
-" set nocursorcolumn
 endfunction
 
 au InsertEnter * call InsertStatuslineColor(v:insertmode)
