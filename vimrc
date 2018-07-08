@@ -23,7 +23,7 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-" A memoizing Parsing Expression Grammar parser generator for Vim.
+" A memorizing Parsing Expression Grammar parser generator for Vim.
 " Plug 'https://github.com/dahu/Vimpeg.git'
 
 Plug 'https://github.com/Shougo/vimproc', { 'do': 'make -f make_unix.mak' }
@@ -89,87 +89,66 @@ Plug 'https://github.com/romgrk/vimfiler-prompt.git'
 
 
 " Code completion
-    
+if has('nvim')
+  Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+else
+  Plug 'https://github.com/Shougo/deoplete.nvim'
+  Plug 'https://github.com/roxma/nvim-yarp'
 " Requires vim8 with has('python') or has('python3')
 " Requires the installation of msgpack-python. (pip install msgpack-python)
-if !has('nvim')
-    Plug 'roxma/vim-hug-neovim-rpc'
+  Plug 'https://github.com/roxma/vim-hug-neovim-rpc'
 endif
 
-Plug 'https://github.com/roxma/nvim-completion-manager.git' " asynchronous completion
-    set shortmess+=c
-    let g:cm_matcher = {'module': 'cm_matchers.fuzzy_matcher', 'case': 'smartcase'}
-    let g:cm_auto_popup = 1
-    let g:cm_complete_start_delay = 1000
-    inoremap <c-c> <ESC>
-    inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-    imap <c-g> <Plug>(cm_force_refresh)
-Plug 'https://github.com/othree/csscomplete.vim'
-"autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS noci
-Plug 'fgrsnau/ncm-otherbuf'
-Plug 'https://github.com/roxma/ncm-clang.git'
-"Plug 'https://github.com/justmao945/vim-clang.git'
-"let g:clang_compilation_database = '.'
-"let g:clang_c_options = '-std=gnu11'
-"let g:clang_cpp_options = '-std=c++14 -stdlib=libc++ -w -I./'
+if executable("clang")
 
-"Plug 'https://github.com/roxma/clang_complete.git'
-"    let g:clang_library_path='/run/current-system/sw/lib'
-"    au FileType c,cpp  nmap gd <Plug>(clang_complete_goto_declaration)
-" Compiler options can be configured in a .clang_complete file in each project root. Example of .clang_complete file:
-" -DDEBUG
-" -include ../config.h
-" -I../common
-" -I/usr/include/c++/4.5.3/
-" -I/usr/include/c++/4.5.3/x86_64-slackware-linux/
-" 
-"     Makefile example for auto-generating .clang_complete
-" 
-" .clang_complete: Makefile
-" 	echo $(CXXFLAGS) > $@
-" 
-" If you are using cmake, unfortunately, I don't have a decent hack. This might work. Currently I use make VERBOSE=1
-" to show the compile command and then edit the .clang_complete manually.    
+" This works well. Not deoplete completor though.
+"Plug 'https://github.com/justmao945/vim-clang.git', { 'for': ['c', 'cpp'] }
+"  " disable auto completion for vim-clang
+"  let g:clang_auto = 0
+"  let g:clang_compilation_database = './build'
+"  " default 'longest' can not work with deoplete
+"  let g:clang_c_completeopt = 'menuone,preview'
+"  let g:clang_cpp_completeopt = 'menuone,preview'
+"" let g:clang_debug = 5 
+"  let g:clang_c_options = '-Qunused-arguments -std=gnu11'
+"  let g:clang_cpp_options = '-Qunused-arguments -std=c++11 -stdlib=libc++'
+"  let g:clang_include_sysheaders_from_gcc = 1
 
+Plug 'https://github.com/Shougo/deoplete-clangx.git', { 'for': ['c', 'cpp'] }
+Plug 'https://github.com/Shougo/neoinclude.vim.git', { 'for': ['c', 'cpp'] }
+
+endif
+
+Plug 'https://github.com/landaire/deoplete-d.git', { 'for': 'd' }
+Plug 'https://github.com/zchee/deoplete-jedi.git', { 'for': 'python' }
+Plug 'https://github.com/sebastianmarkow/deoplete-rust.git', { 'for': 'rust' }
 Plug 'https://github.com/Shougo/neco-vim.git'
-Plug 'https://github.com/jsfaint/gen_tags.vim.git' " nvim-completion-manager source
-Plug 'https://github.com/Shougo/neoinclude.vim.git'
+Plug 'https://github.com/jsfaint/gen_tags.vim.git'
 
-"Plug 'https://github.com/marijnh/tern_for_vim.git'        " JavaScript completion - Not programming in JavaScript
-"Plug 'https://github.com/jimenezrick/vimerl.git'
-"Plug 'https://github.com/osyo-manga/vim-snowdrop.git'
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+
+if !exists('g:deoplete#omni#input_patterns')
+    let g:deoplete#omni#input_patterns = {}
+endif
+
+" Disable the candidates in Comment/String syntaxes.
+"call deoplete#custom#source('_',
+"            \ 'disabled_syntaxes', ['Comment', 'String'])
+
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
+
+inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
+inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
+
+" Oh sweet erlang sweet erlang...
 "Plug 'https://github.com/vim-erlang/vim-erlang-omnicomplete'
-"Plug 'https://github.com/wting/rust.vim.git'                 " Not programming in rust currently
-"Plug 'https://github.com/kchmck/vim-coffee-script'
-"Plug 'https://github.com/xolox/vim-misc.git' " for lua
 
 "Plug 'https://github.com/scrooloose/nerdcommenter' " Comments: \ci
 "    " Always leave a space between the comment character and the comment
 "    let NERDSpaceDelims=1
 "
-"    Plug 'https://github.com/neomake/neomake.git'
-"    let g:neomake_cpp_enabled_makers = ['clang']
-"    let g:neomake_cpp_clang_maker = {
-"                \ 'args': ['-std=c++14', '-w', '-I./']
-"                \ }
-"    augroup vimrc_neomake
-"        au!
-"        autocmd BufWritePost * Neomake
-"    augroup END
-"  let g:neomake_verbose = 3
-
-"    Plug 'https://github.com/scrooloose/syntastic' " Syntax checker
-"    " Don't use Syntastic on erlang files, vimerl does better job
-"    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['erlang'] }
-
-
-"Plug 'https://github.com/sbdchd/neoformat.git'
-"augroup fmt
-"  autocmd!
-"  autocmd BufWritePre * undojoin | Neoformat
-"augroup END
-
 
 Plug 'https://github.com/w0rp/ale.git' " Neomake and Syntastic replacement
 let g:ale_lint_on_text_changed = 'never'
@@ -177,11 +156,12 @@ let g:ale_lint_on_enter = 0
 let g:ale_completion_enabled = 0
 let g:ale_sign_column_always = 1
 let g:ale_linters = {
-\   'cpp': ['clang', 'clangcheck', 'clangtidy'],
+            \ 'c': ['clang'],
+            \ 'cpp': ['clang'],
 \}
 " This does same job as Neoformat
 let g:ale_fixers = {                   
-\   'cpp' : [ 'clang-format' ],
+            \ 'cpp' : [ 'clang-format' ],
 \}
 let g:ale_fix_on_save = 1
 
@@ -204,7 +184,7 @@ Plug 'https://github.com/terryma/vim-expand-region' " Shift +, Shift -
 Plug 'https://github.com/kana/vim-operator-user.git'
 
 " Not using it too much. Well, I don't remember last time I used it or needed it.
-" Plug 'https://github.com/atweiden/vim-dragvisuals.git' " visual selection move
+"Plug 'https://github.com/atweiden/vim-dragvisuals.git' " visual selection move
 "     vmap  <expr>  D        DVB_Duplicate()
 
 "     " Remove any introduced trailing white space after moving...
@@ -216,18 +196,18 @@ Plug 'https://github.com/kana/vim-operator-user.git'
 "     vmap  <expr>  <c-UP>     DVB_Drag('up')
 
 " Not using it.
-" Plug 'https://github.com/vim-scripts/IndentConsistencyCop' " Tabs vs Spaces, Smart-Tabs
+"Plug 'https://github.com/vim-scripts/IndentConsistencyCop' " Tabs vs Spaces, Smart-Tabs
 
 Plug 'https://github.com/dyng/ctrlsf.vim.git' " grep with preview and edit
 
 " Not using it.
-" Plug 'https://github.com/Shougo/vinarise.git' " hex editing
+"Plug 'https://github.com/Shougo/vinarise.git' " hex editing
 "    let g:vinarise_enable_auto_detect = 1
 
 Plug 'https://github.com/reedes/vim-wordy.git' " (also turns spell checking on all files)
 
 " Not really using it.
-" Plug 'https://github.com/justinmk/vim-sneak.git' " the missing motion for Vim: s{char}{char}
+"Plug 'https://github.com/justinmk/vim-sneak.git' " the missing motion for Vim: s{char}{char}
 
 Plug 'https://github.com/airblade/vim-rooter.git' " changes working directory to project root
     " let g:rooter_change_directory_for_non_project_files = 1
@@ -257,9 +237,12 @@ Plug 'https://github.com/junegunn/rainbow_parentheses.vim.git' " rainbow parenth
 Plug 'https://github.com/mechatroner/rainbow_csv.git'
 
 Plug 'https://github.com/kshenoy/vim-signature.git' " toggle, display and navigate marks
-Plug 'https://github.com/Tuxdude/mark.vim'
 
-"Interesting concept, but buggy and slow.
+Plug 'https://github.com/Tuxdude/mark.vim'
+    nnoremap <silent> <leader>k :Mark <C-r><C-w><cr>
+    nnoremap <silent> <leader>K :MarkClear<cr>
+
+" Interesting concept, but buggy and slow.
 "Plug 'https://github.com/chrisbra/DynamicSigns.git'
 
 Plug 'https://github.com/chrisbra/NrrwRgn.git' " narrow region: \nr
@@ -286,17 +269,19 @@ Plug 'https://github.com/vimwiki/vimwiki.git', { 'rev' : 'dev' } " vim wiki
     let g:vimwiki_table_mappings=0
     let g:vimwiki_table_auto_fmt=0
 
-" Plug 'https://github.com/itchyny/calendar.vim' " calendar, cool but I'm not using it
+"Plug 'https://github.com/itchyny/calendar.vim' " calendar, cool but I'm not using it
 
-" Plug 'https://github.com/powerman/vim-plugin-AnsiEsc.git' " ansi escape sequence visualization, cool, but enable it only when needed
+"Plug 'https://github.com/powerman/vim-plugin-AnsiEsc.git' " ansi escape sequence visualization, cool, but enable it only when needed
 
 " GIT integration
 
-" Plug 'https://github.com/tpope/vim-fugitive'
-" Plug 'https://github.com/gregsexton/gitv'
+Plug 'https://github.com/tpope/vim-fugitive'
+Plug 'https://github.com/junegunn/gv.vim'
+"Plug 'https://github.com/gregsexton/gitv'
 Plug 'https://github.com/airblade/vim-gitgutter.git'
     nnoremap <leader>gr :GitGutterRevertHunk<CR>
     let g:gitgutter_max_signs=99999999
+    let g:gitgutter_override_sign_column_highlight = 0
 
 Plug 'https://github.com/jreybert/vimagit.git'
 
@@ -316,9 +301,12 @@ Plug 'https://github.com/vim-pandoc/vim-pandoc-after.git'| " for Unite outline
 "      Firefox is going south and deprecating Addons/Extensions and the
 "      remote control extension I used is no longer supported with recent
 "      Firefox versions.
-"Plug 'https://github.com/tex/vimpreviewpandoc.git' |
-"    Plug 'https://github.com/kmnk/vim-unite-giti.git' |
-"    Plug 'https://github.com/Shougo/unite.vim'
+"      Added support for qutebrowser, the only really usable browser out
+"      there.
+Plug 'https://github.com/tex/vimpreviewpandoc.git' |
+    Plug 'https://github.com/kmnk/vim-unite-giti.git' |
+    Plug 'https://github.com/Shougo/unite.vim' |
+    Plug 'https://github.com/christianrondeau/vim-base64.git'
 
 Plug 'https://github.com/sheerun/vim-polyglot.git' " a collection of programming language packs for Vim
 
@@ -336,12 +324,16 @@ Plug 'https://github.com/Lokaltog/vim-easymotion.git' " for easy motion
 " Plug 'https://github.com/hkupty/iron.nvim.git' " REPL interact
 Plug 'https://github.com/metakirby5/codi.vim.git' " REPL scratch pad
     let g:codi#rightalign=0
-     let g:codi#interpreters = {
-           \ 'python': {
-               \ 'bin': 'nvim-python3',
-               \ 'prompt': '^\(>>>\|\.\.\.\) ',
-               \ },
-           \ }
+    let g:codi#interpreters = {
+                \ 'python': {
+                \ 'bin': 'nvim-python',
+                \ 'prompt': '^\(>>>\|\.\.\.\) ',
+                \ },
+                \ 'python3': {
+                \ 'bin': 'nvim-python3',
+                \ 'prompt': '^\(>>>\|\.\.\.\) ',
+                \ },
+                \ }
 
 Plug 'https://github.com/machakann/vim-highlightedyank.git'
 
@@ -362,6 +354,7 @@ Plug 'https://github.com/thinca/vim-qfreplace.git'
 "Plug 'https://github.com/baabelfish/nvim-nim.git' " NIM language
 
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
+    " <leader>tm - toggle table mode
 
 Plug 'https://github.com/rhysd/clever-f.vim.git'
     let g:clever_f_ignore_case = 1
@@ -369,6 +362,10 @@ Plug 'https://github.com/rhysd/clever-f.vim.git'
 
 "Plug 'https://github.com/ckarnell/history-traverse.git'
 Plug 'https://github.com/tex/vim-bufsurf.git'
+    nnoremap <c-n> :BufSurfBack<cr>
+    nnoremap <c-m> :BufSurfForward<cr>
+    let g:BufSurfIgnore = "vimfiler,NrrwRgn"
+    let g:BufSurfAppearOnce = 0
 
 " Plug 'https://github.com/vim-scripts/Conque-GDB.git' " the only usable plugin for debugging with GDB
 Plug 'https://github.com/mechatroner/minimal_gdb.git'
@@ -376,17 +373,32 @@ Plug 'https://github.com/mechatroner/minimal_gdb.git'
 Plug 'https://github.com/drzel/vim-scroll-off-fraction.git'
     let g:scroll_off_fraction = 0.25
 
-Plug 'https://github.com/beloglazov/vim-online-thesaurus' " \K
+" Interesting but stopped working for some reason.
+"Plug 'https://github.com/beloglazov/vim-online-thesaurus' " \K
+
+Plug 'https://github.com/thinca/vim-quickrun.git'
+
+Plug 'https://github.com/pseewald/vim-anyfold.git'
+
+Plug 'https://github.com/skywind3000/asyncrun.vim.git'
+Plug 'https://github.com/prabirshrestha/async.vim.git'
 
 call plug#end()
 
+call deoplete#custom#option({
+            \ 'auto_complete': v:true,
+            \ 'auto_complete_delay': 800,
+            \ 'smart_case': v:true,
+            \ })
 
-    " let g:dutyl_stdImportPaths=['/nix/store/m1b6nmpb11mjhgw59h7az9ay88jcxmhw-dmd-2.070.2/include']
-	" call dutyl#register#tool('dcd-client', '/home/milan/dev/dlang/DCD/bin/dcd-client')
-	" call dutyl#register#tool('dcd-server', '/home/milan/dev/dlang/DCD/bin/dcd-server')
+if executable("clang")
+call deoplete#custom#var('clangx', 'clang_binary', 'clang')
+call deoplete#custom#var('clangx', 'default_c_options', '')
+call deoplete#custom#var('clangx', 'default_cpp_options', '')
+endif
 
     " <F2>: Save session
-    nnoremap <F2> :<C-u>UniteSessionSave
+    nnoremap <F2> :UniteSessionSave
 
     call unite#custom#profile('default', 'context', {
                 \   'prompt_direction': 'below',
@@ -412,24 +424,24 @@ call plug#end()
     nnoremap [unite] <Nop>
     nmap <space> [unite]
 
-    nnoremap <silent> [unite]<space> :<C-u>Unite -buffer-name=resume resume<CR>
+    nnoremap <silent> [unite]<space> :Unite -buffer-name=resume resume<CR>
 
     " Quick yank history and registers
-    nnoremap <silent> "" :<C-u>Unite -buffer-name=register history/yank register<CR>
+    nnoremap <silent> "" :Unite -buffer-name=register history/yank register<CR>
 
     " Quick buffer
     "  the buffer:- (- means show only file buffers)
-    nnoremap <silent> [unite]b :<C-u>Unite -buffer-name=buffers buffer:-<CR>
+    nnoremap <silent> [unite]b :Unite -buffer-name=buffers buffer:-<CR>
     nnoremap <silent> [unite]B :execute 'Unite -buffer-name=buffers -input='.expand('%:t:r').' buffer:-'<CR>
 
     " Quick outline
-    nnoremap <silent> <C-\> :<C-u>Unite -buffer-name=outline -prompt-direction=top -vertical outline<CR>
+    nnoremap <silent> <C-]> :Unite -buffer-name=outline -prompt-direction=top -vertical outline<CR>
 
     " Quick sessions (projects)
-    nnoremap <silent> [unite]p :<C-u>Unite -buffer-name=sessions session<CR>
+    nnoremap <silent> [unite]p :Unite -buffer-name=sessions session<CR>
 
     " Quick sources
-    nnoremap <silent> [unite]a :<C-u>Unite -buffer-name=sources source<CR>
+    nnoremap <silent> [unite]a :Unite -buffer-name=sources source<CR>
 
     " Quickly switch lcd
     nnoremap <silent> [unite]d :UniteWithProjectDir -buffer-name=change-cwd -default-action=lcd neomru/directory<CR>
@@ -507,10 +519,10 @@ call plug#end()
 
         nnoremap <silent><buffer><expr> cd     unite#do_action('lcd')
 
-        " Using Ctrl-\ to trigger outline, so close it using the same keystroke
+        " Using Ctrl-] to trigger outline, so close it using the same keystroke
         if unite.buffer_name =~# '^outline'
-            imap <buffer> <C-\> <Plug>(unite_exit)
-            nmap <buffer> <C-\> <Plug>(unite_exit)
+            imap <buffer> <C-]> <Plug>(unite_exit)
+            nmap <buffer> <C-]> <Plug>(unite_exit)
         endif
 
         " Using z= to trigger spell_suggest, so close it using the same keystroke
@@ -602,24 +614,21 @@ call plug#end()
             return
         endif
 
-        let from  = ''
-        let to    = ''
         let file  = len(a:candidates[0].action__file) > 0
                     \               ? a:candidates[0].action__file
                     \               : expand('%:p')
         let relative_path = giti#to_relative_path(file)
         if len(a:candidates) == 1
-            let to   = a:candidates[0].action__data.hash
-            let from = a:candidates[0].action__data.parent_hash
+            let from = a:candidates[0].action__data.hash
+            call vimpreviewpandoc#VimPreviewPandocGitDiff(relative_path, from)
         elseif len(a:candidates) == 2
             let to   = a:candidates[0].action__data.hash
             let from = a:candidates[1].action__data.hash
+            call vimpreviewpandoc#VimPreviewPandocGitDiff(relative_path, from, to)
         else
             call unite#print_error('too many commits selected')
             return
         endif
-
-        call vimpreviewpandoc#VimPreviewPandocGitDiff(relative_path, from, to)
     endfunction
 
     call unite#custom#action('giti/log', 'diff_pandoc_preview', s:pandoc_diff_action)
@@ -843,6 +852,13 @@ nnoremap <A-Down> <C-w>j
 nnoremap <A-Left> <C-w>h
 nnoremap <A-Right> <C-w>l
 
+tnoremap <Esc> <C-\><C-n>
+
+tnoremap <A-Up> <C-\><C-n><C-w>k
+tnoremap <A-Down> <C-\><C-n><C-w>j
+tnoremap <A-Left> <C-\><C-n><C-w>h
+tnoremap <A-Right> <C-\><C-n><C-w>l
+
 nnoremap <leader>1 1<C-w>w
 nnoremap <leader>2 2<C-w>w
 nnoremap <leader>3 3<C-w>w
@@ -886,8 +902,8 @@ autocmd BufEnter * :syntax sync fromstart
 "augroup END
 
 " Show marks columns even when there are no signs shown.
-autocmd BufEnter * sign define dummy
-autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
+"autocmd BufEnter * sign define dummy
+"autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
 
 
 
@@ -1040,12 +1056,79 @@ endfunction
 
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{LinterStatus()}\ %{HistoryStatus()}\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
 
-nnoremap <c-n> :BufSurfBack<cr>
-nnoremap <c-m> :BufSurfForward<cr>
-let g:BufSurfIgnore = "vimfiler"
-let g:BufSurfAppearOnce = 0
-
 set signcolumn=yes
 
+""
+" Create the terminal buffer.
+""
+function! TerminalCreate() abort
+	if !has('nvim')
+		return v:false
+	endif
+
+	if !exists('g:terminal')
+		let g:terminal = {
+			\ 'opts': {},
+			\ 'term': {
+				\ 'loaded': v:null,
+				\ 'bufferid': v:null
+			\ },
+			\ 'origin': {
+				\ 'bufferid': v:null
+			\ }
+		\ }
+
+		function! g:terminal.opts.on_exit(jobid, data, event) abort
+			silent execute 'buffer' g:terminal.origin.bufferid
+			silent execute 'bdelete!' g:terminal.term.bufferid
+
+			let g:terminal.term.loaded = v:null
+			let g:terminal.term.bufferid = v:null
+			let g:terminal.origin.bufferid = v:null
+		endfunction
+	endif
+
+	if g:terminal.term.loaded
+		return v:false
+	endif
+
+	let g:terminal.origin.bufferid = bufnr('')
+
+	enew
+	call termopen(&shell, g:terminal.opts)
+
+	let g:terminal.term.loaded = v:true
+	let g:terminal.term.bufferid = bufnr('')
+endfunction
+
+""
+" Toggle terminal buffer or create new one if there is none.
+"
+""
+function! NormalTerminal() abort
+	if !has('nvim')
+		return v:false
+	endif
+
+	" Create the terminal buffer.
+	if !exists('g:terminal') || !g:terminal.term.loaded
+		return TerminalCreate()
+	endif
+
+	" Go back to origin buffer if current buffer is terminal.
+	if g:terminal.term.bufferid ==# bufnr('')
+		silent execute 'buffer' g:terminal.origin.bufferid
+
+	" Launch terminal buffer and start insert mode.
+	else
+		let g:terminal.origin.bufferid = bufnr('')
+
+		silent execute 'buffer' g:terminal.term.bufferid
+		startinsert
+	endif
+endfunction
+
+nnoremap <silent> <C-z> :call NormalTerminal()<Enter>
+tnoremap <silent> <C-z> <C-\><C-n>:call NormalTerminal()<Enter>
 
 
