@@ -1,5 +1,4 @@
 colorscheme darkblue
-
 set nocompatible
 
 if has('nvim')
@@ -16,33 +15,14 @@ else
     endif
 endif
 
-
-"===============================================================================
-" Plug
-"===============================================================================
-
 call plug#begin('~/.vim/plugged')
 
 " A memorizing Parsing Expression Grammar parser generator for Vim.
-" Plug 'https://github.com/dahu/Vimpeg.git'
+"Plug 'https://github.com/dahu/Vimpeg.git'
 
-Plug 'https://github.com/Shougo/vimproc', { 'do': 'make -f make_unix.mak' }
-
-" UNITE
-Plug 'https://github.com/Shougo/unite.vim'
-
-" use this for Unite file_list
-"
-function! FindFileSearchUp(file_name)
-    " From our current directory, search up for file list
-    let l:file_name = findfile(a:file_name, '.;/')      " must be somewhere above us
-    let l:file_name = fnamemodify(l:file_name, ':p')    " get the full path
-    if filereadable(l:file_name)
-        return l:file_name
-    else
-        return a:file_name
-    endif
-endfunction
+" Unite
+Plug 'https://github.com/Shougo/unite.vim' |
+    Plug 'https://github.com/Shougo/vimproc', { 'do': 'make -f make_unix.mak' }
 
 Plug 'https://github.com/Shougo/unite-outline'
 Plug 'https://github.com/Shougo/unite-help'
@@ -61,7 +41,6 @@ Plug 'https://github.com/tacroe/unite-mark.git'
                 \   "abcdefghijklmnopqrstuvwxyz"
                 \ . "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                 \ . "0123456789.'`^<>[]{}()\""
-
 Plug 'https://github.com/sanford1/unite-unicode.git'
 Plug 'https://github.com/kopischke/unite-spell-suggest.git'
 Plug 'https://github.com/osyo-manga/unite-quickfix.git'
@@ -87,7 +66,6 @@ Plug 'https://github.com/romgrk/vimfiler-prompt.git'
         nmap <buffer> i :VimFilerPrompt<CR>
     endfunction
 
-
 " Code completion
 if has('nvim')
   Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -103,10 +81,10 @@ if executable("clang")
 
 " This works well. Not deoplete completor though.
 "Plug 'https://github.com/justmao945/vim-clang.git', { 'for': ['c', 'cpp'] }
-"  " disable auto completion for vim-clang
+"  " Disable auto completion for vim-clang
 "  let g:clang_auto = 0
 "  let g:clang_compilation_database = './build'
-"  " default 'longest' can not work with deoplete
+"  " Default 'longest' can not work with deoplete
 "  let g:clang_c_completeopt = 'menuone,preview'
 "  let g:clang_cpp_completeopt = 'menuone,preview'
 "" let g:clang_debug = 5 
@@ -119,10 +97,14 @@ Plug 'https://github.com/Shougo/neoinclude.vim.git', { 'for': ['c', 'cpp'] }
 
 endif
 
-Plug 'https://github.com/landaire/deoplete-d.git', { 'for': 'd' }
 Plug 'https://github.com/zchee/deoplete-jedi.git', { 'for': 'python' }
-Plug 'https://github.com/sebastianmarkow/deoplete-rust.git', { 'for': 'rust' }
-Plug 'https://github.com/Shougo/neco-vim.git'
+Plug 'https://github.com/Shougo/neco-vim.git', { 'for': 'vim' }
+
+"Plug 'https://github.com/landaire/deoplete-d.git', { 'for': 'd' }
+"Plug 'https://github.com/sebastianmarkow/deoplete-rust.git', { 'for': 'rust' }
+"Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
+"Plug 'https://github.com/baabelfish/nvim-nim.git' " NIM language
+
 Plug 'https://github.com/jsfaint/gen_tags.vim.git'
 
 let g:deoplete#enable_at_startup = 1
@@ -142,8 +124,8 @@ inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
 inoremap <expr> <Tab> pumvisible() ? "\<Down>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
 
-" Oh sweet erlang sweet erlang...
-"Plug 'https://github.com/vim-erlang/vim-erlang-omnicomplete'
+" Oh sweet erlang, sweet erlang...
+"Plug 'https://github.com/vim-erlang/vim-erlang-omnicomplete', { 'for': 'erlang' }
 
 "Plug 'https://github.com/scrooloose/nerdcommenter' " Comments: \ci
 "    " Always leave a space between the comment character and the comment
@@ -151,26 +133,26 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<Up>" : "\<S-Tab>"
 "
 
 Plug 'https://github.com/w0rp/ale.git' " Neomake and Syntastic replacement
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 0
-let g:ale_completion_enabled = 0
-let g:ale_sign_column_always = 1
-let g:ale_linters = {
-            \ 'c': ['clang'],
-            \ 'cpp': ['clang'],
-\}
-" This does same job as Neoformat
-let g:ale_fixers = {                   
-            \ 'cpp' : [ 'clang-format' ],
-\}
-let g:ale_fix_on_save = 1
+    let g:ale_lint_on_text_changed = 'never'
+    let g:ale_lint_on_enter = 0
+    let g:ale_completion_enabled = 0
+    let g:ale_sign_column_always = 1
+    let g:ale_linters = {
+                \ 'c': ['clang'],
+                \ 'cpp': ['clang'],
+    \}
+    " This does same job as Neoformat
+    let g:ale_fixers = {                   
+                \ 'cpp' : [ 'clang-format' ],
+    \}
+    let g:ale_fix_on_save = 1
 
 " This would be needed if my patch to ALE is not accepted.
-" This depends on ncm-clang
-" autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
+" This depends on ncm-clang.
+"autocmd BufEnter *.cpp,*.h,*.hpp,*.hxx let g:ale_cpp_clang_options = join(ncm_clang#compilation_info()['args'], ' ')
 
 " Bind F8 to fixing problems with ALE
-"  nmap <F8> <Plug>(ale_fix)
+"nmap <F8> <Plug>(ale_fix)
 
 " Text Objects
 Plug 'https://github.com/wellle/targets.vim.git' " di', cin), da, ... many targets
@@ -204,7 +186,8 @@ Plug 'https://github.com/dyng/ctrlsf.vim.git' " grep with preview and edit
 "Plug 'https://github.com/Shougo/vinarise.git' " hex editing
 "    let g:vinarise_enable_auto_detect = 1
 
-Plug 'https://github.com/reedes/vim-wordy.git' " (also turns spell checking on all files)
+" Not using it.
+"Plug 'https://github.com/reedes/vim-wordy.git' " (also turns spell checking on all files)
 
 " Not really using it.
 "Plug 'https://github.com/justinmk/vim-sneak.git' " the missing motion for Vim: s{char}{char}
@@ -223,20 +206,23 @@ Plug 'https://github.com/junegunn/rainbow_parentheses.vim.git' " rainbow parenth
 "Interesting concept, but it colors only text, not whole line.
 "Plug 'https://github.com/thiagoalessio/rainbow_levels.vim.git'
 "    au Filetype * RainbowLevelsOn
-"let g:rainbow_levels = [
-"    \{'ctermbg': 232, 'guibg': '#080808'},
-"    \{'ctermbg': 233, 'guibg': '#121212'},
-"    \{'ctermbg': 234, 'guibg': '#1c1c1c'},
-"    \{'ctermbg': 235, 'guibg': '#262626'},
-"    \{'ctermbg': 236, 'guibg': '#303030'},
-"    \{'ctermbg': 237, 'guibg': '#3a3a3a'},
-"    \{'ctermbg': 238, 'guibg': '#444444'},
-"    \{'ctermbg': 239, 'guibg': '#4e4e4e'},
-"    \{'ctermbg': 240, 'guibg': '#585858'}]
+"    let g:rainbow_levels = [
+"       \{'ctermbg': 232, 'guibg': '#080808'},
+"       \{'ctermbg': 233, 'guibg': '#121212'},
+"       \{'ctermbg': 234, 'guibg': '#1c1c1c'},
+"       \{'ctermbg': 235, 'guibg': '#262626'},
+"       \{'ctermbg': 236, 'guibg': '#303030'},
+"       \{'ctermbg': 237, 'guibg': '#3a3a3a'},
+"       \{'ctermbg': 238, 'guibg': '#444444'},
+"       \{'ctermbg': 239, 'guibg': '#4e4e4e'},
+"       \{'ctermbg': 240, 'guibg': '#585858'}]
 
 Plug 'https://github.com/mechatroner/rainbow_csv.git'
 
-Plug 'https://github.com/kshenoy/vim-signature.git' " toggle, display and navigate marks
+" Toggle, display and navigate marks
+Plug 'https://github.com/kshenoy/vim-signature.git'
+    " mx    toggle mark 'x'
+    " dmx   remove mark 'x'
 
 Plug 'https://github.com/Tuxdude/mark.vim'
     nnoremap <silent> <leader>k :Mark <C-r><C-w><cr>
@@ -245,11 +231,15 @@ Plug 'https://github.com/Tuxdude/mark.vim'
 " Interesting concept, but buggy and slow.
 "Plug 'https://github.com/chrisbra/DynamicSigns.git'
 
-Plug 'https://github.com/chrisbra/NrrwRgn.git' " narrow region: \nr
+Plug 'https://github.com/chrisbra/NrrwRgn.git'
+    " <leader>nr    narrow region
 
-Plug 'https://github.com/tommcdo/vim-kangaroo.git' " manual jump stack: zp, zP
+Plug 'https://github.com/tommcdo/vim-kangaroo.git'
+    " zp    push current cursor position to jump stack
+    " zP    pop from jump stack
 
-"Plug 'https://github.com/pgdouyon/vim-evanesco.git' " replacement for vim-oblique - improved / search, mark.vim is better
+" Replacement for vim-oblique - improved / search, mark.vim is better
+"Plug 'https://github.com/pgdouyon/vim-evanesco.git'
 
 Plug 'https://github.com/chrisbra/vim-diff-enhanced' " :EnhancedDiff ...
     " If started In Diff-Mode set diffexpr (plugin not loaded yet)
@@ -257,24 +247,28 @@ Plug 'https://github.com/chrisbra/vim-diff-enhanced' " :EnhancedDiff ...
         let &diffexpr='EnhancedDiff#Diff("git diff", "--diff-algorithm=patience")'
     endif
 
-Plug 'https://github.com/tmhedberg/matchit.git' " Extended matching with '%'
+Plug 'https://github.com/tmhedberg/matchit.git'
+    " % extended matching
 
-Plug 'https://github.com/vim-scripts/ShowMultiBase.git' " Display number under cursor in specified format(s): \= \b= \o= \d= \h=
+" Display number under cursor in specified format(s): \= \b= \o= \d= \h=
+Plug 'https://github.com/vim-scripts/ShowMultiBase.git'
     let g:ShowMultiBase_Parse_Binary_PrefixPattern = '0\=[bB]'
     let g:ShowMultiBase_Display_Decimal_Show = 1
 
-Plug 'https://github.com/vimwiki/vimwiki.git', { 'rev' : 'dev' } " vim wiki
+Plug 'https://github.com/vimwiki/vimwiki.git', { 'rev' : 'dev' }
     let g:vimwiki_listsyms = '✗○◐●✓'
     let g:vimwiki_list = [{'auto_tags': 1}]
     let g:vimwiki_table_mappings=0
     let g:vimwiki_table_auto_fmt=0
 
-"Plug 'https://github.com/itchyny/calendar.vim' " calendar, cool but I'm not using it
+" Calendar, cool but I'm not using it.
+"Plug 'https://github.com/itchyny/calendar.vim'
 
-"Plug 'https://github.com/powerman/vim-plugin-AnsiEsc.git' " ansi escape sequence visualization, cool, but enable it only when needed
+" ANSI escape sequence visualization, cool, but enable it only when needed.
+"Plug 'https://github.com/powerman/vim-plugin-AnsiEsc.git'
 
 " GIT integration
-
+Plug 'https://github.com/jreybert/vimagit.git'
 Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/junegunn/gv.vim'
 "Plug 'https://github.com/gregsexton/gitv'
@@ -282,8 +276,6 @@ Plug 'https://github.com/airblade/vim-gitgutter.git'
     nnoremap <leader>gr :GitGutterRevertHunk<CR>
     let g:gitgutter_max_signs=99999999
     let g:gitgutter_override_sign_column_highlight = 0
-
-Plug 'https://github.com/jreybert/vimagit.git'
 
 " Pandoc - Markdown
 Plug 'https://github.com/vim-pandoc/vim-pandoc'
@@ -308,50 +300,51 @@ Plug 'https://github.com/tex/vimpreviewpandoc.git' |
     Plug 'https://github.com/Shougo/unite.vim' |
     Plug 'https://github.com/christianrondeau/vim-base64.git'
 
-Plug 'https://github.com/sheerun/vim-polyglot.git' " a collection of programming language packs for Vim
+" Normalize async job control api for vim and neovim
+" Required by vimpreviewpandoc...
+Plug 'https://github.com/prabirshrestha/async.vim.git'
 
-Plug 'https://github.com/mbbill/undotree.git' " for visualize undo tree
+" A collection of programming language packs for Vim
+Plug 'https://github.com/sheerun/vim-polyglot.git'
+
+" To visualize undo tree
+Plug 'https://github.com/mbbill/undotree.git'
     nnoremap <C-u> :UndotreeToggle<CR>
     function! g:Undotree_CustomMap()
         nmap <buffer> <S-u> <plug>UndotreeRedo
     endfunc
 
-Plug 'https://github.com/Lokaltog/vim-easymotion.git' " for easy motion
+" For easy motion
+Plug 'https://github.com/Lokaltog/vim-easymotion.git'
     let g:EasyMotion_do_mapping=0
-    map <Leader><Leader>w <Plug>(easymotion-bd-w)
-
+    map <Leader>w <Plug>(easymotion-bd-w)
 
 " Plug 'https://github.com/hkupty/iron.nvim.git' " REPL interact
 Plug 'https://github.com/metakirby5/codi.vim.git' " REPL scratch pad
     let g:codi#rightalign=0
     let g:codi#interpreters = {
-                \ 'python': {
+            \ 'python': {
                 \ 'bin': 'nvim-python',
                 \ 'prompt': '^\(>>>\|\.\.\.\) ',
-                \ },
-                \ 'python3': {
+            \ },
+            \ 'python3': {
                 \ 'bin': 'nvim-python3',
                 \ 'prompt': '^\(>>>\|\.\.\.\) ',
-                \ },
-                \ }
+            \ },
+        \ }
 
 Plug 'https://github.com/machakann/vim-highlightedyank.git'
 
 Plug 'https://github.com/tex/vim-dirdiff.git'
-    " this plugin has bug in parsing non-C language diff output
+    " This plugin has bug in parsing non-C language diff output
     let g:DirDiffForceLang = "C"
 
 Plug 'https://github.com/Shougo/context_filetype.vim.git'
 Plug 'https://github.com/Shougo/echodoc.vim.git'
-"   set cmdheight=2
     set noshowmode
     let g:echodoc_enable_at_startup = 1
 
 Plug 'https://github.com/thinca/vim-qfreplace.git'
-
-"Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
-
-"Plug 'https://github.com/baabelfish/nvim-nim.git' " NIM language
 
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
     " <leader>tm - toggle table mode
@@ -367,38 +360,38 @@ Plug 'https://github.com/tex/vim-bufsurf.git'
     let g:BufSurfIgnore = "vimfiler,NrrwRgn"
     let g:BufSurfAppearOnce = 0
 
-" Plug 'https://github.com/vim-scripts/Conque-GDB.git' " the only usable plugin for debugging with GDB
+" The only usable plugin for debugging with GDB
+"Plug 'https://github.com/vim-scripts/Conque-GDB.git'
 Plug 'https://github.com/mechatroner/minimal_gdb.git'
 
 Plug 'https://github.com/drzel/vim-scroll-off-fraction.git'
     let g:scroll_off_fraction = 0.25
 
-" Interesting but stopped working for some reason.
-"Plug 'https://github.com/beloglazov/vim-online-thesaurus' " \K
+" Interesting but it stopped working for some reason.
+"Plug 'https://github.com/beloglazov/vim-online-thesaurus'
+"   <leader>K
 
 Plug 'https://github.com/thinca/vim-quickrun.git'
 
 Plug 'https://github.com/pseewald/vim-anyfold.git'
+    let g:anyfold_activate=1
 
 Plug 'https://github.com/skywind3000/asyncrun.vim.git'
-Plug 'https://github.com/prabirshrestha/async.vim.git'
+"   :AsyncRun ...command...
 
 call plug#end()
 
 call deoplete#custom#option({
-            \ 'auto_complete': v:true,
-            \ 'auto_complete_delay': 800,
-            \ 'smart_case': v:true,
-            \ })
+    \ 'auto_complete': v:true,
+    \ 'auto_complete_delay': 800,
+    \ 'smart_case': v:true,
+    \ })
 
 if executable("clang")
-call deoplete#custom#var('clangx', 'clang_binary', 'clang')
-call deoplete#custom#var('clangx', 'default_c_options', '')
-call deoplete#custom#var('clangx', 'default_cpp_options', '')
+    call deoplete#custom#var('clangx', 'clang_binary', 'clang')
+    call deoplete#custom#var('clangx', 'default_c_options', '')
+    call deoplete#custom#var('clangx', 'default_cpp_options', '')
 endif
-
-    " <F2>: Save session
-    nnoremap <F2> :UniteSessionSave
 
     call unite#custom#profile('default', 'context', {
                 \   'prompt_direction': 'below',
@@ -435,7 +428,7 @@ endif
     nnoremap <silent> [unite]B :execute 'Unite -buffer-name=buffers -input='.expand('%:t:r').' buffer:-'<CR>
 
     " Quick outline
-    nnoremap <silent> <C-]> :Unite -buffer-name=outline -prompt-direction=top -vertical outline<CR>
+    nnoremap <silent> [unite]; :Unite -buffer-name=outline -prompt-direction=top -vertical outline<CR>
 
     " Quick sessions (projects)
     nnoremap <silent> [unite]p :Unite -buffer-name=sessions session<CR>
@@ -450,6 +443,18 @@ endif
     nnoremap <silent> [unite]f :execute 'UniteWithBufferDir -start-insert -buffer-name=file_list -resume file_list:'. escape(FindFileSearchUp('filelist.txt'), ':') .''<CR>
 "   nnoremap <silent> [unite]F :UniteResume files<CR>
 
+        " Use this for Unite file_list
+        function! FindFileSearchUp(file_name)
+            " From our current directory, search up for file list
+            let l:file_name = findfile(a:file_name, '.;/')      " must be somewhere above us
+            let l:file_name = fnamemodify(l:file_name, ':p')    " get the full path
+            if filereadable(l:file_name)
+                return l:file_name
+            else
+                return a:file_name
+            endif
+        endfunction
+
     " Search files with the same base name as has the currently selected buffer
     nnoremap <silent> [unite]fr :execute 'UniteWithProjectDir -buffer-name=file_rec -resume -input='.expand('%:t:r').' file_rec'<CR>
     nnoremap <silent> [unite]fg :execute 'UniteWithProjectDir -buffer-name=file_gtags_path -resume -input='.expand('%:t:r').' gtags/path'<CR>
@@ -457,9 +462,6 @@ endif
     " Quick grep from cwd
     nnoremap <silent> [unite]g :Unite -buffer-name=grep grep<CR>
     nnoremap <silent> [unite]G :UniteResume grep<CR>
-
-    " Quick help
-    nnoremap <silent> [unite]h :Unite -buffer-name=help help<CR>
 
     " Quick line using the word under cursor
     nnoremap <silent> <C-_> :UniteWithCursorWord -buffer-name=search_file line<CR>
@@ -480,7 +482,7 @@ endif
     nnoremap <silent> [unite]j :Unite -buffer-name=jumps jump<CR>
 
     " Quick commands
-    nnoremap <silent> [unite]; :Unite -buffer-name=history history/command command<CR>
+    nnoremap <silent> [unite]h :Unite -buffer-name=history history/command command<CR>
 
     " Spell suggest
     nnoremap <silent> z= :Unite -buffer-name=spell_suggest -prompt-direction=top -vertical -winwidth=20 spell_suggest<CR>
@@ -519,11 +521,11 @@ endif
 
         nnoremap <silent><buffer><expr> cd     unite#do_action('lcd')
 
-        " Using Ctrl-] to trigger outline, so close it using the same keystroke
-        if unite.buffer_name =~# '^outline'
-            imap <buffer> <C-]> <Plug>(unite_exit)
-            nmap <buffer> <C-]> <Plug>(unite_exit)
-        endif
+        " Using ... to trigger outline, so close it using the same keystroke
+"       if unite.buffer_name =~# '^outline'
+"           imap <buffer> ... <Plug>(unite_exit)
+"           nmap <buffer> ... <Plug>(unite_exit)
+"       endif
 
         " Using z= to trigger spell_suggest, so close it using the same keystroke
         if unite.buffer_name =~# '^spell_suggest'
@@ -562,23 +564,13 @@ endif
     let g:unite_source_file_mru_filename_format = ':~:.'
     let g:unite_source_file_mru_time_format = ''
 
-    " speed up recursive file searches and ignore patters in .gitignore
-"    if executable('ag')
-"        let g:unite_source_rec_async_command = [ 'ag', '--follow', '--nogroup', '--hidden', '--nocolor', '-g', '' ]
-"        let g:unite_source_grep_command = 'ag'
-"        let g:unite_source_grep_default_opts =
-"                    \ '-i --vimgrep --hidden --ignore ' .
-"                    \ '''.hg'' --ignore ''.svn'' --ignore ''.git'' --ignore ''.bzr'''
-"        let g:unite_source_grep_recursive_opt = ''
-"    endif
-
     call unite#custom_default_action('directory,directory_mru', 'cd')
 
-    " Using unite-todo plugin, change notes format to 'markdown' (actually 'pandoc', since I have pandoc plugins installed):
-
+    " Using unite-todo plugin, change notes format to 'markdown'
+    " (actually 'pandoc', since I have pandoc plugins installed)
     let g:unite_todo_note_suffix = 'markdown'
 
-    " To be able to select firs line next to input in input mode
+    " To be able to select first line next to input in input mode
     let g:unite_enable_auto_select = 0
 
     "===============================================================================
@@ -596,6 +588,11 @@ endif
     "    endif
     "endfunction
 
+    " <F2>: Save session
+    nnoremap <F2> :UniteSessionSave
+
+    " Beginning Vimpreviewpandoc Unite support for diffing document versions
+    " in git.
 
     function! s:is_graph_only_line(candidate)
         return has_key(a:candidate.action__data, 'hash') ? 0 : 1
@@ -634,13 +631,16 @@ endif
     call unite#custom#action('giti/log', 'diff_pandoc_preview', s:pandoc_diff_action)
     unlet s:pandoc_diff_action
 
+    " End of Vimpreviewpandoc Unite support for diffing document versions
+    " in git.
 
-filetype plugin indent on
-syntax enable
 
 "===============================================================================
 " General Settings
 "===============================================================================
+
+filetype plugin indent on
+syntax enable
 
 " Turn on line number
 set number
@@ -667,9 +667,8 @@ set autoread
 
 " Auto complete setting
 set completeopt=longest,menuone
-
 set wildmode=list:longest,full
-set wildmenu "turn on wild menu
+set wildmenu                "turn on wild menu
 set wildignore=*.o,*.obj,*~ "stuff to ignore when tab completing
 
 " Allow changing buffer without saving it first
@@ -728,9 +727,14 @@ set tabstop=4
 set softtabstop=4
 set smarttab
 
-" Text display settings
+set foldmethod=indent
+set nofoldenable
+
+set breakindent
+
+" Text display settings.
 set linebreak
-" set textwidth=80
+set showbreak=↪
 set nowrap
 set whichwrap+=h,l,<,>,[,]
 
@@ -742,11 +746,13 @@ else
   set clipboard=unnamed
 endif
 
-" Use a low updatetime. This is used by CursorHold
-" set updatetime=1000
+set ffs=unix,dos,mac
 
-" Set autochdir, works better with Unite.vim
-" set autochdir
+" Disable showing of: Hit enter or type command to command to continue.
+set sc nosc
+
+" Use a low update time. This is used by CursorHold.
+"set updatetime=1000
 
 " Autosave & Load Views.
 set viewoptions=folds,cursor
@@ -756,8 +762,8 @@ autocmd BufWinEnter * if &modifiable && &ft!='unite' | silent! loadview | endif
 " Spell-checking
 " Add words to the dictionary by cursoring over those words in a file and
 " typing: zg
-autocmd FileType pandoc set complete+=kspell
-autocmd FileType pandoc setlocal spell
+autocmd FileType * set complete+=kspell
+autocmd FileType * setlocal spell
 set spell
 
 " Search for tags file in upper directories until tags file found.
@@ -769,18 +775,12 @@ set undofile
 set undolevels=1000 "maximum number of changes that can be undone
 set undoreload=10000 "maximum number lines to save for undo on a buffer reload
 
-"===============================================================================
-" Function Key Mappings
-"===============================================================================
+if has('nvim')
+  set icm=nosplit
+  set mouse=a
+endif
 
-"===============================================================================
-" Leader Key Mappings
-"===============================================================================
-
-
-"===============================================================================
-" Command-line Mode Key Mappings
-"===============================================================================
+set signcolumn=yes
 
 " Allow saving of files as sudo when I forgot to start vim using sudo.
 cmap w!! w !sudo tee %
@@ -788,146 +788,57 @@ cmap w!! w !sudo tee %
 " Allow to change permission before write.
 cmap w!!! silent w !chmod +w %
 
-"===============================================================================
-" Normal Mode Shift Key Mappings
-"===============================================================================
-
-
-"===============================================================================
-" Normal Mode Ctrl Key Mappings
-"===============================================================================
-
+" Scroll up and down without moving cursor position.
 map <C-Up>   <C-y>
 map <C-Down> <C-e>
+inoremap <C-Up> <Esc><C-y>a
+inoremap <C-Down> <Esc><C-e>a
 
-" u - undo, S-u redo, C-u gundo
+" u   undo
+" S-u redo
+" C-u gundo
 map <S-u> :redo<CR>
 
-"===============================================================================
-" Insert Mode Ctrl Key Mappings
-"===============================================================================
-inoremap <C-Up> <Esc><C-y><Insert><Right>
-inoremap <C-Down> <Esc><C-e><Insert><Right>
-
-"===============================================================================
-" Visual Mode Ctrl Key Mappings
-"===============================================================================
-
-
-"===============================================================================
-" Normal Mode Meta Key Mappings
-"===============================================================================
-
-
-"===============================================================================
-" Insert Mode Meta Key Mappings
-"===============================================================================
-
-
-"===============================================================================
-" Visual Mode Meta Key Mappings
-"===============================================================================
-
-
-"===============================================================================
-" Space Key Mappings
-"===============================================================================
-
-"===============================================================================
-" Normal Mode Key Mappings
-"===============================================================================
-
 " Tab: Go to matching element
-" Disabled for now because <Tab> is equal to <C-i> which I use heavily
-" nnoremap <Tab> %
+" Disabled for now because <Tab> is equal to <C-i> which I use heavily.
+"nnoremap <Tab> %
 
+" Press 'cd' to change directory to folder where currently open file is.
 nnoremap cd :lcd %:p:h<bar>pwd<cr>
 
 " Let PgUp and PgDown scroll up to first/last line.
 nnoremap <pageup> <c-u><c-u>
 nnoremap <pagedown> <c-d><c-d>
 
+" Move cursor to different window by pressing ALT-Arrows.
 nnoremap <A-Up> <C-w>k
 nnoremap <A-Down> <C-w>j
 nnoremap <A-Left> <C-w>h
 nnoremap <A-Right> <C-w>l
 
+" Easy exit from insert mode in terminal.
 tnoremap <Esc> <C-\><C-n>
 
+" Move cursor to different window by pressing ALT-Arrows in terminal.
 tnoremap <A-Up> <C-\><C-n><C-w>k
 tnoremap <A-Down> <C-\><C-n><C-w>j
 tnoremap <A-Left> <C-\><C-n><C-w>h
 tnoremap <A-Right> <C-\><C-n><C-w>l
 
-nnoremap <leader>1 1<C-w>w
-nnoremap <leader>2 2<C-w>w
-nnoremap <leader>3 3<C-w>w
-nnoremap <leader>4 4<C-w>w
-nnoremap <leader>5 5<C-w>w
-nnoremap <leader>6 6<C-w>w
-nnoremap <leader>7 7<C-w>w
-
-"===============================================================================
-" Visual Mode Key Mappings
-"===============================================================================
-
 " vmap - mapping for visual mode
-" _d - delete current selection into "black hole register"
-" P - paste
+"   _d - delete current selection into "black hole register"
+"   P  - paste
 vmap r "_dP
-
-"===============================================================================
-" Operator Pending Mode Key Mappings
-"===============================================================================
 
 " Replace a word under cursor by pressing \s
 :nnoremap <Leader>s :%s/\<<C-r><C-w>\>//g<Left><Left>
 
-"===============================================================================
-" Autocommands
-"===============================================================================
-
 " The most accurate syntax highlighting.
 autocmd BufEnter * :syntax sync fromstart
-
-" Enable omni completion
-"augroup MyAutoCmd
-"  autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
-"  autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
-"  autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-"  autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
-"  autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
-"  autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
-"  autocmd FileType java setlocal omnifunc=eclim#java#complete#CodeComplete
-"augroup END
 
 " Show marks columns even when there are no signs shown.
 "autocmd BufEnter * sign define dummy
 "autocmd BufEnter * execute 'sign place 9999 line=1 name=dummy buffer=' . bufnr('')
-
-
-
-" >>   Indent line by shiftwidth spaces
-" <<   De-indent line by shiftwidth spaces
-" 5>>  Indent 5 lines
-" 5==  Re-indent 5 lines
-"
-" >%   Increase indent of a braced or bracketed block (place cursor on brace first)
-" =%   Reindent a braced or bracketed block (cursor on brace)
-" <%   Decrease indent of a braced or bracketed block (cursor on brace)
-" ]p   Paste text, aligning indentation with surroundings
-"
-" =i{  Re-indent the 'inner block', i.e. the contents of the block
-" =a{  Re-indent 'a block', i.e. block and containing braces
-" =2a{ Re-indent '2 blocks', i.e. this block and containing block
-"
-" >i{  Increase inner block indent
-" <i{  Decrease inner block indent
-" You can replace { with } or B, e.g. =iB is a valid block indent command. Take a look at 'Indent a Code Block' for a nice example to try these commands out on.
-"
-" Also, remember that
-"
-" .    Repeat last command
 
 " >>> Play Python from within Vim
 " >>> useful to copy/paste samples and run inside Vim
@@ -955,18 +866,14 @@ nn<silent>Zz :let pyf=tempname()<CR>
 nm<silent> <C-L>   yip}Zz
 xm<silent> <C-L> :y<CR>}Zz
 im<silent> <C-L> <Esc>:y<CR>Zy
-" --------------------------------------------
+" ================================
 endif
+" ================================
 
 " TODO >>> Play Erlang from within Vim
 " erl -noshell -eval 'R = 16#1F+16#A0, io:format("~.16B~n", [R])' -s erlang halt
 
-set foldmethod=indent
-set foldenable
-
-set breakindent
-
-" Better new line indentation for C, CPP files.
+" Better new line indentation for c, cpp files.
 au FileType c,cpp :set cinoptions+=L0
 
 " I like the darkblue colorscheme but don't like its LineNr being green.
@@ -979,11 +886,10 @@ highlight SpellRare ctermfg=202 ctermbg=NONE cterm=NONE
 highlight SpellLocal ctermfg=202 ctermbg=NONE cterm=NONE
 
 " Default is some unreadable light-blue:
-"  term=standout ctermfg=15 ctermbg=81 guifg=#ffffff guibg=#287ef
+"term=standout ctermfg=15 ctermbg=81 guifg=#ffffff guibg=#287ef
 highlight ErrorMsg term=reverse ctermfg=15 ctermbg=9 guifg=White guibg=Red
 
 " Default is some unreadable ping with light text:
-"
 highlight DiffChange ctermfg=9 ctermbg=NONE cterm=NONE
 highlight DiffText   ctermfg=9 ctermbg=NONE cterm=NONE
 
@@ -996,14 +902,9 @@ highlight Visual ctermfg=81 ctermbg=21
 highlight MatchParn ctermfg=2 ctermbg=NONE cterm=NONE
 highlight CursorLine cterm=bold ctermfg=black ctermbg=lightblue
 
-set ffs=unix,dos,mac
-
-" Disable showing of: Hit enter or type command to command to continue
-set sc nosc
-
-set linebreak
-set showbreak=↪
-
+" ================================
+" Different color status for each mode.
+" ================================
 function! InsertStatuslineColor(mode)
   if a:mode == 'i'
     hi statusline ctermbg=lightblue ctermfg=black
@@ -1023,13 +924,9 @@ au InsertChange * call InsertStatuslineColor(v:insertmode)
 au InsertLeave * call InsertLeaveActions()
 call InsertLeaveActions()
 
-" to handle exiting insert mode via a control-C
+" To handle exiting insert mode via a control-C.
 inoremap <c-c> <c-o>:call InsertLeaveActions()<cr><c-c>
-
-if has('nvim')
-  set icm=nosplit
-  set mouse=a
-endif
+" ================================
 
 function! LinterStatus() abort
     let l:counts = ale#statusline#Count(bufnr(''))
@@ -1038,10 +935,9 @@ function! LinterStatus() abort
     let l:all_non_errors = l:counts.total - l:all_errors
 
     return l:counts.total == 0 ? 'OK' : printf(
-    \   '%dW %dE',
-    \   all_non_errors,
-    \   all_errors
-    \)
+                \ '%dW %dE',
+                \ all_non_errors,
+                \ all_errors)
 endfunction
 
 function! HistoryStatus() abort
@@ -1056,11 +952,9 @@ endfunction
 
 set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %{LinterStatus()}\ %{HistoryStatus()}\ %{noscrollbar#statusline(9,'■','◫',['◧'],['◨'])}
 
-set signcolumn=yes
-
-""
+" ================================
 " Create the terminal buffer.
-""
+" ================================
 function! TerminalCreate() abort
 	if !has('nvim')
 		return v:false
@@ -1101,10 +995,9 @@ function! TerminalCreate() abort
 	let g:terminal.term.bufferid = bufnr('')
 endfunction
 
-""
+" ================================
 " Toggle terminal buffer or create new one if there is none.
-"
-""
+" ================================
 function! NormalTerminal() abort
 	if !has('nvim')
 		return v:false
@@ -1128,7 +1021,31 @@ function! NormalTerminal() abort
 	endif
 endfunction
 
+" ================================
 nnoremap <silent> <C-z> :call NormalTerminal()<Enter>
 tnoremap <silent> <C-z> <C-\><C-n>:call NormalTerminal()<Enter>
+" ================================
 
+" >>   Indent line by shiftwidth spaces
+" <<   De-indent line by shiftwidth spaces
+" 5>>  Indent 5 lines
+" 5==  Re-indent 5 lines
+"
+" >%   Increase indent of a braced or bracketed block (place cursor on brace first)
+" =%   Reindent a braced or bracketed block (cursor on brace)
+" <%   Decrease indent of a braced or bracketed block (cursor on brace)
+" ]p   Paste text, aligning indentation with surroundings
+"
+" =i{  Re-indent the 'inner block', i.e. the contents of the block
+" =a{  Re-indent 'a block', i.e. block and containing braces
+" =2a{ Re-indent '2 blocks', i.e. this block and containing block
+"
+" >i{  Increase inner block indent
+" <i{  Decrease inner block indent
+" You can replace { with } or B, e.g. =iB is a valid block indent command. Take
+" a look at 'Indent a Code Block' for a nice example to try these commands out on.
+"
+" Also, remember that
+"
+" .    Repeat last command
 
