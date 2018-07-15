@@ -269,9 +269,10 @@ Plug 'https://github.com/vimwiki/vimwiki.git', { 'rev' : 'dev' }
 
 " GIT integration
 Plug 'https://github.com/jreybert/vimagit.git'
-Plug 'https://github.com/tpope/vim-fugitive'
-Plug 'https://github.com/junegunn/gv.vim'
-"Plug 'https://github.com/gregsexton/gitv'
+"Plug 'https://github.com/junegunn/gv.vim'          " no better then gitv
+Plug 'https://github.com/gregsexton/gitv' |
+    Plug 'https://github.com/tpope/vim-fugitive'
+"Plug 'https://github.com/mhinz/vim-signify.git'    " no better then gitgutter
 Plug 'https://github.com/airblade/vim-gitgutter.git'
     nnoremap <leader>gr :GitGutterRevertHunk<CR>
     let g:gitgutter_max_signs=99999999
@@ -289,20 +290,16 @@ Plug 'https://github.com/vim-pandoc/vim-pandoc-after.git'| " for Unite outline
     Plug 'https://github.com/Shougo/unite.vim'
     let g:pandoc#after#modules#enabled = ["unite"]
 
-"Well, Konqueror is basically abandoned, not working well on NixOs,
-"      Firefox is going south and deprecating Addons/Extensions and the
-"      remote control extension I used is no longer supported with recent
-"      Firefox versions.
-"      Added support for qutebrowser, the only really usable browser out
-"      there.
+" Well, Konqueror is basically abandoned, not working well on NixOs,
+" Firefox is going south and deprecating Addons/Extensions and the
+" remote control extension I used is no longer supported with recent
+" Firefox versions. Added support for qutebrowser, the only really
+" usable browser out there.
 Plug 'https://github.com/tex/vimpreviewpandoc.git' |
     Plug 'https://github.com/kmnk/vim-unite-giti.git' |
     Plug 'https://github.com/Shougo/unite.vim' |
-    Plug 'https://github.com/christianrondeau/vim-base64.git'
-
-" Normalize async job control api for vim and neovim
-" Required by vimpreviewpandoc...
-Plug 'https://github.com/prabirshrestha/async.vim.git'
+    Plug 'https://github.com/christianrondeau/vim-base64.git' |
+    Plug 'https://github.com/prabirshrestha/async.vim.git'  " Normalize async job control api for vim and neovim
 
 " A collection of programming language packs for Vim
 Plug 'https://github.com/sheerun/vim-polyglot.git'
