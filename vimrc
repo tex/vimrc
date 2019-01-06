@@ -32,7 +32,10 @@ Plug 'https://github.com/Shougo/neomru.vim'
 Plug 'https://github.com/Shougo/neoyank.vim.git'
 Plug 'https://github.com/Shougo/tabpagebuffer.vim'
 Plug 'https://github.com/thinca/vim-unite-history'
+
 Plug 'https://github.com/hewes/unite-gtags.git'
+"Plug 'https://github.com/jsfaint/gen_tags.vim.git' " Breaks global on Windows
+
 Plug 'https://github.com/tex/vim-unite-id.git'
 Plug 'https://github.com/kannokanno/unite-todo.git'
 Plug 'https://github.com/kmnk/vim-unite-giti.git'
@@ -100,19 +103,20 @@ endif
 Plug 'https://github.com/zchee/deoplete-jedi.git', { 'for': 'python' }
 Plug 'https://github.com/Shougo/neco-vim.git', { 'for': 'vim' }
 
-"Plug 'https://github.com/landaire/deoplete-d.git', { 'for': 'd' }
+if executable("dmd")
+Plug 'https://github.com/landaire/deoplete-d.git', { 'for': 'd' }
+endif
+
 "Plug 'https://github.com/sebastianmarkow/deoplete-rust.git', { 'for': 'rust' }
 "Plug 'https://github.com/idanarye/vim-dutyl.git' " D language
 "Plug 'https://github.com/baabelfish/nvim-nim.git' " NIM language
 
-Plug 'https://github.com/jsfaint/gen_tags.vim.git'
-
 let g:deoplete#enable_at_startup = 1
 let g:deoplete#enable_smart_case = 1
 
-if !exists('g:deoplete#omni#input_patterns')
-    let g:deoplete#omni#input_patterns = {}
-endif
+"if !exists('g:deoplete#omni#input_patterns')
+"    let g:deoplete#omni#input_patterns = {}
+"endif
 
 " Disable the candidates in Comment/String syntaxes.
 "call deoplete#custom#source('_',
@@ -146,6 +150,12 @@ Plug 'https://github.com/w0rp/ale.git' " Neomake and Syntastic replacement
                 \ 'cpp' : [ 'clang-format' ],
     \}
     let g:ale_fix_on_save = 1
+    let g:ale_virtualtext_cursor = 1
+    let g:ale_virtualtext_prefix = " <== "
+    highlight link ALEErrorSign ALEError
+    highlight link ALEWarningSign ALEWarning
+    let g:ale_sign_error = "=>"
+    let g:ale_sign_warning = "=="
 
 " This would be needed if my patch to ALE is not accepted.
 " This depends on ncm-clang.
@@ -181,6 +191,7 @@ Plug 'https://github.com/kana/vim-operator-user.git'
 "Plug 'https://github.com/vim-scripts/IndentConsistencyCop' " Tabs vs Spaces, Smart-Tabs
 
 Plug 'https://github.com/dyng/ctrlsf.vim.git' " grep with preview and edit
+    let g:ctrlsf_case_sensitive = 'yes'
 
 " Not using it.
 "Plug 'https://github.com/Shougo/vinarise.git' " hex editing
@@ -274,7 +285,8 @@ Plug 'https://github.com/gregsexton/gitv' |
     Plug 'https://github.com/tpope/vim-fugitive'
 "Plug 'https://github.com/mhinz/vim-signify.git'    " no better then gitgutter
 Plug 'https://github.com/airblade/vim-gitgutter.git'
-    nnoremap <leader>gr :GitGutterRevertHunk<CR>
+    nnoremap <leader>gr :GitGutterUndoHunk<CR>
+    nnoremap <leader>gp :GitGutterPreviewHunk<CR>
     let g:gitgutter_max_signs=99999999
     let g:gitgutter_override_sign_column_highlight = 0
 
@@ -316,8 +328,11 @@ Plug 'https://github.com/Lokaltog/vim-easymotion.git'
     let g:EasyMotion_do_mapping=0
     map <Leader>w <Plug>(easymotion-bd-w)
 
-" Plug 'https://github.com/hkupty/iron.nvim.git' " REPL interact
+"Plug 'https://github.com/vigemus/iron.nvim.git' " REPL interact
 Plug 'https://github.com/metakirby5/codi.vim.git' " REPL scratch pad
+" Guile interpreter requires this in ~/.guile:
+" (use-modules (ice-9 readline))
+" (activate-readline)
     let g:codi#rightalign=0
     let g:codi#interpreters = {
             \ 'python': {
@@ -328,7 +343,16 @@ Plug 'https://github.com/metakirby5/codi.vim.git' " REPL scratch pad
                 \ 'bin': 'nvim-python3',
                 \ 'prompt': '^\(>>>\|\.\.\.\) ',
             \ },
-        \ }
+            \ 'guile': {
+                \ 'bin': 'guile',
+                \ 'prompt': '^scheme@(guile-user)> ',
+            \ },
+            \ 'cpp': {
+                \ 'bin': ['root', '-l', '-b'],
+                \ 'prompt': '^root \[\d\] ',
+                \ 'quitcmd': '.q',
+                \ },
+            \ }
 
 Plug 'https://github.com/machakann/vim-highlightedyank.git'
 
@@ -340,6 +364,7 @@ Plug 'https://github.com/Shougo/context_filetype.vim.git'
 Plug 'https://github.com/Shougo/echodoc.vim.git'
     set noshowmode
     let g:echodoc_enable_at_startup = 1
+    let g:echodoc#type = 'virtual'
 
 Plug 'https://github.com/thinca/vim-qfreplace.git'
 
@@ -371,21 +396,39 @@ Plug 'https://github.com/drzel/vim-scroll-off-fraction.git'
 Plug 'https://github.com/thinca/vim-quickrun.git'
 
 Plug 'https://github.com/pseewald/vim-anyfold.git'
-    let g:anyfold_activate=1
+autocmd Filetype * AnyFoldActivate
 
 Plug 'https://github.com/skywind3000/asyncrun.vim.git'
 "   :AsyncRun ...command...
+    nnoremap <F1> :AsyncRun g++ -O3 "%" -o "%<" -lpthread && ./"%<"<CR>
+
+    func CloseUniteQuickfix(timer)
+        execute 'UniteClose quickfix'
+    endfunc
+
+    " Raises Unite quickfix window every time something is added to quickfix
+    augroup vimrc
+        autocmd User AsyncRunStop :Unite -buffer-name=quickfix -prompt-direction=top -winheight=8 -no-focus quickfix
+        autocmd User AsyncRunStop :call timer_start(3000, 'CloseUniteQuickfix')
+    augroup END
+
+"Plug 'https://github.com/mashedcode/notmuch-vim.git'
+"Plug 'https://github.com/kitwestneat/notmuch-vim-ruby.git'
+"TODO
+Plug 'https://github.com/daisuzu/unite-notmuch.git'
 
 call plug#end()
 
 call deoplete#custom#option({
-    \ 'auto_complete': v:true,
+    \ 'auto_complete': v:false,
     \ 'auto_complete_delay': 800,
     \ 'smart_case': v:true,
-    \ })
+    \ 'sources': {
+            \ '_': ['buffer', 'tag', 'ngram'],
+    \ }})
 
 if executable("clang")
-    call deoplete#custom#var('clangx', 'clang_binary', 'clang')
+    call deoplete#custom#var('clangx', 'clang_binary', 'clang++')
     call deoplete#custom#var('clangx', 'default_c_options', '')
     call deoplete#custom#var('clangx', 'default_cpp_options', '')
 endif
@@ -395,26 +438,27 @@ endif
                 \   'marked_icon': '✓'
                 \ })
 
-"		" Start insert mode in unite-action buffer.
-"		call unite#custom#profile('action', 'context', {
-"		\   'start_insert' : 1
-"		\ })
-"
-"		" Set "-no-quit" automatically in grep unite source.
-"		call unite#custom#profile('source/grep', 'context', {
-"		\   'no_quit' : 1
-"		\ })
-"
-"		" Use start insert by default.
-"		call unite#custom#profile('default', 'context', {
-"		\   'start_insert' : 1
-"		\ })
+		" Start insert mode in unite-action buffer.
+		call unite#custom#profile('action', 'context', {
+		\   'start_insert' : 1
+		\ })
+
+		" Set "-no-quit" automatically in grep unite source.
+		call unite#custom#profile('source/grep', 'context', {
+		\   'no_quit' : 1
+		\ })
+
+		" Use start insert by default.
+		call unite#custom#profile('default', 'context', {
+		\   'start_insert' : 1,
+        \   'direction' : 'dynamicbottom'
+		\ })
 
     " Map space to the prefix for Unite
     nnoremap [unite] <Nop>
     nmap <space> [unite]
 
-    nnoremap <silent> [unite]<space> :Unite -buffer-name=resume resume<CR>
+    nnoremap <silent> [unite]<space> :Unite -buffer-name=resume -no-start-insert resume<CR>
 
     " Quick yank history and registers
     nnoremap <silent> "" :Unite -buffer-name=register history/yank register<CR>
@@ -438,7 +482,7 @@ endif
 
     " Quick file search
     nnoremap <silent> [unite]f :execute 'UniteWithBufferDir -start-insert -buffer-name=file_list -resume file_list:'. escape(FindFileSearchUp('filelist.txt'), ':') .''<CR>
-"   nnoremap <silent> [unite]F :UniteResume files<CR>
+    nnoremap <silent> [unite]F :UniteResume files<CR>
 
         " Use this for Unite file_list
         function! FindFileSearchUp(file_name)
@@ -481,8 +525,11 @@ endif
     " Quick commands
     nnoremap <silent> [unite]h :Unite -buffer-name=history history/command command<CR>
 
+    " Quick fix
+    nnoremap <silent> [unite]q :Unite -buffer-name=quickfix -prompt-direction=top -winheight=8 quickfix<CR>
+    "
     " Spell suggest
-    nnoremap <silent> z= :Unite -buffer-name=spell_suggest -prompt-direction=top -vertical -winwidth=20 spell_suggest<CR>
+    nnoremap <silent> z= :Unite -buffer-name=spell_suggest -no-start-insert -prompt-direction=top -vertical -winwidth=20 spell_suggest<CR>
 
     " Quick gtags references
     autocmd FileType c,cpp,yacc,java,php,asm,erlang,python nnoremap <silent> g[ :Unite -buffer-name=gtags-ref gtags/ref<CR>
@@ -551,8 +598,9 @@ endif
     " Enable history yank source
     let g:unite_source_history_yank_enable = 1
 
-    " Open in bottom right
-    let g:unite_split_rule = "botright"
+    " Open in bottom right - problem with "Cannot make changes, 'modifiable' is off"
+    " message breaking cursor movement in insert mode.
+"    let g:unite_split_rule = "botright"
 
     let g:unite_source_file_mru_limit = 1000
     let g:unite_cursor_line_highlight = 'TabLineSel'
@@ -563,29 +611,29 @@ endif
 
     call unite#custom_default_action('directory,directory_mru', 'cd')
 
-    " Using unite-todo plugin, change notes format to 'markdown'
-    " (actually 'pandoc', since I have pandoc plugins installed)
+   " Using unite-todo plugin, change notes format to 'markdown'
+   " (actually 'pandoc', since I have pandoc plugins installed)
     let g:unite_todo_note_suffix = 'markdown'
 
-    " To be able to select first line next to input in input mode
+   " To be able to select first line next to input in input mode
     let g:unite_enable_auto_select = 0
 
-    "===============================================================================
-    " Unite Sessions
-    "===============================================================================
+   "===============================================================================
+   " Unite Sessions
+   "===============================================================================
 
-    " Save session automatically.
+   " Save session automatically.
     let g:unite_source_session_enable_auto_save = 1
 
-    " Pop up session selection if no file is specified
-    "autocmd MyAutoCmd VimEnter * call s:unite_session_on_enter()
-    "function! s:unite_session_on_enter()
-    "    if !argc() && !exists("g:start_session_from_cmdline")
-    "        Unite -buffer-name=sessions session
-    "    endif
-    "endfunction
+   " Pop up session selection if no file is specified
+   "autocmd MyAutoCmd VimEnter * call s:unite_session_on_enter()
+   "function! s:unite_session_on_enter()
+   "    if !argc() && !exists("g:start_session_from_cmdline")
+   "        Unite -buffer-name=sessions session
+   "    endif
+   "endfunction
 
-    " <F2>: Save session
+   " <F2>: Save session
     nnoremap <F2> :UniteSessionSave
 
     " Beginning Vimpreviewpandoc Unite support for diffing document versions
@@ -628,8 +676,8 @@ endif
     call unite#custom#action('giti/log', 'diff_pandoc_preview', s:pandoc_diff_action)
     unlet s:pandoc_diff_action
 
-    " End of Vimpreviewpandoc Unite support for diffing document versions
-    " in git.
+   " End of Vimpreviewpandoc Unite support for diffing document versions
+   " in git.
 
 
 "===============================================================================
@@ -759,8 +807,8 @@ autocmd BufWinEnter * if &modifiable && &ft!='unite' | silent! loadview | endif
 " Spell-checking
 " Add words to the dictionary by cursoring over those words in a file and
 " typing: zg
-autocmd FileType * set complete+=kspell
-autocmd FileType * setlocal spell
+set complete+=kspell
+set spelllang=en,cs
 set spell
 
 " Search for tags file in upper directories until tags file found.
